@@ -1,0 +1,40 @@
+import 'package:consultas_y_contrataciones/Feature/HubPrincipal/Presentaion/HubPrincipalScreen.dart';
+import 'package:flutter/material.dart';
+import 'Feature/ConsultaDeCertificaciónDeCargos/Presentation/paginaconsultacontraloria.dart';
+import 'Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Presentation/paginaverificacgr.dart';
+import 'Feature/ConsultaEmpleadosDelEstado/Presentation/paginaconsultaempleados.dart';
+import 'Feature/ConsultaCorrespondencia/Presentation/paginaconsultacorrespondencia.dart';
+void main() {
+  runApp(const MiAppContraloria());
+}
+
+class MiAppContraloria extends StatelessWidget {
+  const MiAppContraloria({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Portal Contraloría',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF003870),
+        ),
+        useMaterial3: true,
+      ),
+      // Ruta inicial al abrir la App
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HubPrincipalScreen(),
+        '/certificacion-cargos': (context) => const PaginaConsultaContraloria(),
+        '/verifica-cgr': (context) => const PaginaVerificaCgr(),
+        '/consulta-empleados': (context) => const PaginaConsultaEmpleados(),
+        // TODO: Aquí agregarás las otras 3 pantallas cuando las crees:
+        '/consulta-correspondencia': (context) => const PaginaConsultaCorrespondencia(),
+        // '/consulta-3': (context) => const PantallaTres(),
+        // '/consulta-4': (context) => const PantallaCuatro(),
+        // '/consulta-5': (context) => const PantallaCinco(),
+      },
+    );
+  }
+}
