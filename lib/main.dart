@@ -1,4 +1,4 @@
-import 'package:consultas_y_contrataciones/Feature/HubPrincipal/Presentaion/HubPrincipalScreen.dart';
+import 'package:consultas_y_contrataciones/Feature/HubPrincipal/Presentation/hub_principal_screen.dart';
 import 'package:flutter/material.dart';
 import 'Feature/ConsultaDeCertificaciónDeCargos/Presentation/paginaconsultacontraloria.dart';
 import 'Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Presentation/paginaverificacgr.dart';

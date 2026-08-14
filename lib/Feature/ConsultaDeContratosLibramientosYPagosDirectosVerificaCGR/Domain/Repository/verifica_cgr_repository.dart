@@ -1,11 +1,7 @@
-
-/*
 import 'package:consultas_y_contrataciones/Core/Captcha/captcha_provider.dart';
 import 'package:consultas_y_contrataciones/Core/Captcha/sin_captcha.dart';
-import 'package:consultas_y_contrataciones/Core/GenericRepository/generic_repository.dart';
 import 'package:consultas_y_contrataciones/Core/Network/ApiClient.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/consulta_resultado_entity.dart';
-import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Repository/Interface/iverifica_cgr_repository.dart';
 
 
 class VerificaCgrRepository {
@@ -32,5 +28,3 @@ class VerificaCgrRepository {
     return ConsultaResultadoEntity.fromJson(response);
   }
 }
-
-*/

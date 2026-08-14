@@ -1,8 +1,11 @@
-import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/ConsultaResultadoEntity.dart';
-import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Repository/VerificaCgrRepository.dart';
-import 'package:consultas_y_contrataciones/GeneralFeatures/FooterInstitucional.dart';
+import 'package:consultas_y_contrataciones/Core/Captcha/captcha_cacheado.dart';
+import 'package:consultas_y_contrataciones/Core/Captcha/recaptcha_web_view_provider.dart';
+import 'package:consultas_y_contrataciones/Core/GeneralFeatures/recaptchahost.dart';
+import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/consulta_resultado_entity.dart';
+import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Repository/verifica_cgr_repository.dart';
+import 'package:consultas_y_contrataciones/Core/GeneralFeatures/footer_institucional.dart';
 import 'package:flutter/material.dart';
-import 'package:consultas_y_contrataciones/GeneralFeatures/HeaderInstitucional.dart';
+import 'package:consultas_y_contrataciones/Core/GeneralFeatures/header_institucional.dart';
 import 'package:flutter/services.dart'; 
 import '../../../Core/Network/ApiClient.dart';
 /*
@@ -302,9 +305,13 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
 
 */
 
-
 class PaginaVerificaCgr extends StatefulWidget {
-  const PaginaVerificaCgr({super.key});
+  final bool mostrarAppBar;
+
+  const PaginaVerificaCgr({
+    super.key,
+    this.mostrarAppBar = true,
+  });
 
   @override
   State<PaginaVerificaCgr> createState() => _PaginaVerificaCgrState();
@@ -314,8 +321,8 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
   final TextEditingController _documentoController = TextEditingController();
   final FocusNode _focoNode = FocusNode();
 
-  // Cliente HTTP Base y Repositorio de la consulta
   late final ApiClient _apiClient;
+  late final RecaptchaWebViewProvider _recaptchaBase;
   late final VerificaCgrRepository _repository;
 
   bool _isLoading = false;
@@ -328,11 +335,18 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
   @override
   void initState() {
     super.initState();
-    // 1. Inicializamos el cliente API base
-    _apiClient = ApiClient(baseUrl: 'https://servicios.contraloria.gob.do/api/v1');
+    _apiClient = ApiClient(baseUrl: 'https://consultas.contraloria.gob.do/verificacgr');
+
     
-    // 2. Inyectamos el cliente en el repositorio específico de Verifica CGR
-    _repository = VerificaCgrRepository(_apiClient);
+    // Inicializamos la estrategia de Captcha con Caché según la guía
+    _recaptchaBase = RecaptchaWebViewProvider(
+      siteKey: 'TU_RECAPTCHA_SITE_KEY', // Sustituir por la clave de producción
+    );
+
+    _repository = VerificaCgrRepository(
+      _apiClient,
+      captchaProvider: CaptchaCacheado(_recaptchaBase),
+    );
   }
 
   @override
@@ -342,18 +356,30 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
     super.dispose();
   }
 
-  Future<void> _buscarTramite() async {
-    final documento = _documentoController.text.trim();
+  String _limpiarDocumento(String input) {
+    return input.replaceAll(RegExp(r'\D'), '');
+  }
 
-    // Validaciones básicas de entrada
-    if (documento.isEmpty || (documento.length != 9 && documento.length != 11)) {
+  Future<void> _buscarTramite() async {
+    final documentoLimpio = _limpiarDocumento(_documentoController.text);
+
+/*
+    if (documentoLimpio.isEmpty || (documentoLimpio.length != 9 && documentoLimpio.length != 11)) {
       setState(() {
-        _errorMessage = 'Por favor, ingrese un RNC (9 dígitos) o Cédula (11 dígitos) válido';
+        _errorMessage = 'Ingrese un RNC de 9 dígitos o Cédula de 11 dígitos válido.';
       });
       _mostrarSnackBar(_errorMessage!, esError: true);
       return;
     }
+    */
 
+  if (documentoLimpio.isEmpty || (documentoLimpio.length != 9 || documentoLimpio.length != 11)) {
+        setState(() {
+          _errorMessage = 'Ingrese un RNC de 9 dígitos o Cédula de 11 dígitos válido.';
+        });
+        _mostrarSnackBar(_errorMessage!, esError: true);
+        return;
+      }
     _focoNode.unfocus();
     setState(() {
       _isLoading = true;
@@ -361,37 +387,39 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
     });
 
     try {
-      // Petición limpia a través del repositorio específico
       final ConsultaResultadoEntity resultado = 
-          await _repository.consultarPorDocumento(documento);
+          await _repository.consultarTramites(documentoLimpio);
 
       if (!mounted) return;
       setState(() => _isLoading = false);
 
-      // Feedback exitoso utilizando las propiedades de la entidad
-      final mensajeExito = resultado.nombreProveedor.isNotEmpty
-          ? "Consulta realizada para: ${resultado.nombreProveedor}"
-          : "Trámites encontrados: ${resultado.tramites.length}";
+      if (resultado.estaVacio) {
+        if (resultado.rpeInhabilitado) {
+          _mostrarSnackBar(
+            "El proveedor se encuentra INHABILITADO en el RPE y no posee trámites pendientes.",
+            esError: true,
+          );
+        } else {
+          _mostrarSnackBar("Actualmente usted no posee trámites pendientes.");
+        }
+        return;
+      }
 
-      _mostrarSnackBar(mensajeExito);
+      final String nombre = resultado.nombreProveedor.isNotEmpty 
+          ? resultado.nombreProveedor 
+          : "Proveedor con RNC/Cédula: $documentoLimpio";
 
-      // TODO: Si tienes una pantalla de resultados, navegas pasándole la entidad:
-      // Navigator.push(
-      //   context, 
-      //   MaterialPageRoute(builder: (_) => PantallaResultados(resultado: resultado)),
-      // );
+      _mostrarSnackBar("Resultados cargados para: $nombre");
 
     } catch (e) {
       if (!mounted) return;
       
-      final errorTexto = "Error al realizar la consulta: ${e.toString().replaceAll('Exception: ', '')}";
-      
       setState(() {
         _isLoading = false;
-        _errorMessage = errorTexto;
+        _errorMessage = "Error al conectar con la CGR: ${e.toString().replaceAll('Exception: ', '')}";
       });
 
-      _mostrarSnackBar(errorTexto, esError: true);
+      _mostrarSnackBar(_errorMessage!, esError: true);
     }
   }
 
@@ -405,64 +433,100 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
     );
   }
 
+  void _mostrarBaseLegalDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          "Base Legal - Verifica CGR",
+          style: TextStyle(color: azulMedianoche, fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        content: const SingleChildScrollView(
+          child: Text(
+            "Conforme a la Ley No. 10-07 que crea el Sistema Nacional de Control Interno y de la Contraloría General de la República, esta herramienta permite fiscalizar los expedientes en tránsito.\n\n"
+            "Nota: Esta consulta únicamente refleja los trámites que se encuentran actualmente en curso dentro de la Contraloría General de la República.",
+            style: TextStyle(fontSize: 13, height: 1.4, color: Color(0xFF4A5568)),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cerrar", style: TextStyle(color: azulBoton, fontWeight: FontWeight.bold)),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final controlador = _recaptchaBase.controladorActual;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F8),
-      appBar: AppBar(
-        backgroundColor: azulMedianoche,
-        iconTheme: const IconThemeData(color: Colors.white),
-        elevation: 0,
-        title: const Text(
-          "Certificación de Cargos",
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        ),
-      ),
+      appBar: widget.mostrarAppBar
+          ? AppBar(
+              backgroundColor: azulMedianoche,
+              iconTheme: const IconThemeData(color: Colors.white),
+              elevation: 0,
+              title: const Text(
+                "Certificación de Cargos",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            )
+          : null,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            const HeaderInstitucional(
-              tituloPantalla: "Consulta Solicitudes Certificación de Cargos",
-            ),
-            const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
+            // El Host invisible del reCAPTCHA en el árbol de widgets
+            if (controlador != null) RecaptchaHost(controlador: controlador),
 
-            Expanded(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1100),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0,
-                      vertical: 32.0,
-                    ),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        bool isDesktop = constraints.maxWidth > 768;
+            Column(
+              children: [
+                const HeaderInstitucional(
+                  tituloPantalla: "Consulta Solicitudes Certificación de Cargos",
+                ),
+                const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
 
-                        return isDesktop
-                            ? Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(child: _buildInformacionIzquierda()),
-                                  const SizedBox(width: 48),
-                                  Expanded(child: _buildTarjetaFormulario()),
-                                ],
-                              )
-                            : Column(
-                                children: [
-                                  _buildInformacionIzquierda(),
-                                  const SizedBox(height: 32),
-                                  _buildTarjetaFormulario(),
-                                ],
-                              );
-                      },
+                Expanded(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1100),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24.0,
+                          vertical: 32.0,
+                        ),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            bool isDesktop = constraints.maxWidth > 768;
+
+                            return isDesktop
+                                ? Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(child: _buildInformacionIzquierda()),
+                                      const SizedBox(width: 48),
+                                      Expanded(child: _buildTarjetaFormulario()),
+                                    ],
+                                  )
+                                : Column(
+                                    children: [
+                                      _buildInformacionIzquierda(),
+                                      const SizedBox(height: 32),
+                                      _buildTarjetaFormulario(),
+                                    ],
+                                  );
+                          },
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
 
-            const FooterInstitucional(),
+                const FooterInstitucional(),
+              ],
+            ),
           ],
         ),
       ),
@@ -484,18 +548,23 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
         ),
         const SizedBox(height: 16),
         RichText(
-          text: const TextSpan(
-            style: TextStyle(fontSize: 14, color: Color(0xFF4A5568), height: 1.5),
+          text: TextSpan(
+            style: const TextStyle(fontSize: 14, color: Color(0xFF4A5568), height: 1.5),
             children: [
-              TextSpan(text: "Acceda de forma segura y transparente a la información de sus "),
-              TextSpan(text: "trámites en proceso.", style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(text: "\nEsta consulta solo mostrará los trámites que se encuentren en Contraloría. "),
-              TextSpan(
-                text: "Base legal",
-                style: TextStyle(
-                  color: azulBoton,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
+              const TextSpan(text: "Acceda de forma segura y transparente a la información de sus "),
+              const TextSpan(text: "trámites en proceso.", style: TextStyle(fontWeight: FontWeight.bold)),
+              const TextSpan(text: "\nEsta consulta solo mostrará los trámites que se encuentren en Contraloría. "),
+              WidgetSpan(
+                child: GestureDetector(
+                  onTap: _mostrarBaseLegalDialog,
+                  child: const Text(
+                    "Base legal",
+                    style: TextStyle(
+                      color: azulBoton,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 ),
               ),
             ],
