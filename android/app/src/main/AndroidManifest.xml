@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Único permiso obligatorio para consultar la API de la CGR. En debug
+         Flutter lo inyecta solo, pero en release hace falta declararlo aquí o
+         la app no tiene red. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:label="consultas_y_contrataciones"
         android:name="${applicationName}"
