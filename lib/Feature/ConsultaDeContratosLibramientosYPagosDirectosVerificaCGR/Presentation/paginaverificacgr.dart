@@ -46,6 +46,7 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
 
     // Inicializamos la estrategia de Captcha con Caché
     _recaptchaBase = RecaptchaWebViewProvider(
+      //Aun no se tiene ninguna clave
       siteKey: 'TU_RECAPTCHA_SITE_KEY', // Sustituir por la clave de producción
     );
 

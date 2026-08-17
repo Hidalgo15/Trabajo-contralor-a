@@ -1,0 +1,84 @@
+Cosas a tomar en concideracion.
+
+1- Entidades: Las entidades "ConsultaResultadoEntity" y "TramiteEntity", son DTOS para mapear el resultado de los Json.
+
+2- ApiClient: La clase "ApiClient" es la clase que establece conexion con la API, los diferentes features, tomaran una instancia
+de esta para poder hacer sus consultas individuales.
+
+ApiClient({
+    this.baseUrl = 'https://consultas.contraloria.gob.do/verificacgr/api/Consulta/',
+    //Prueba de url especifica con rnc de claro
+    //this.baseUrl = 'https://consultas.contraloria.gob.do/verificacgr/api/Consulta/GetTramitesProveedor?nodocumento=101001577',
+    http.Client? httpClient,
+  }) : _httpClient = httpClient ?? http.Client();
+
+
+3- Repository: La clase "VerificaCgrRepository" obtiene una instancia de "ApiClient" y a su ruta especifica,
+la direccion de consulta de cgr junto con el numero de el documento ("Cedula"/"RNC").
+
+class VerificaCgrRepository {
+  final ApiClient apiClient;
+  final CaptchaProvider captchaProvider;
+
+  VerificaCgrRepository(
+    this.apiClient, {
+    this.captchaProvider = const SinCaptcha(), // Default como indica la guía
+  });
+
+  Future<ConsultaResultadoEntity> consultarTramites(String documento) async {
+    // 1. Obtener token del proveedor (si es SinCaptcha devuelve null, si es Recaptcha devuelve el token o lo busca en cache)
+    final token = await captchaProvider.obtenerToken();
+
+    // 2. Realizar la petición
+    // Nota: Como explica la guía, GetTramitesProveedor responde directamente
+    final response = await apiClient.get(
+      '/Consulta/GetTramitesProveedor',
+      queryParams: {'rncCedula': documento},
+      // headers: token != null ? {'X-Captcha-Token': token} : null,
+    );
+
+    return ConsultaResultadoEntity.fromJson(response);
+  }
+}
+
+4- GenericRepository: La clase "GenericRepository" no tiene ninguna utilidad por el momento, se puede pasar por alto.
+
+5- PaginaVerificaCgr: Esta es la clase del FrontEnd, en esta pagina es donde se ingresara el documento de identidad ("Cedula" , "RNC")
+es en esta misma pagina que se ingresa la SideKey para el Recaptcha.
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Usamos el constructor por defecto de ApiClient sin sobreescribir baseUrl
+    _apiClient = ApiClient();
+
+    // Inicializamos la estrategia de Captcha con Caché
+    _recaptchaBase = RecaptchaWebViewProvider(
+      //Aun no se tiene ninguna clave
+      siteKey: 'TU_RECAPTCHA_SITE_KEY', // Sustituir por la clave de producción
+    );
+
+    _repository = VerificaCgrRepository(
+      _apiClient,
+      captchaProvider: CaptchaCacheado(_recaptchaBase),
+    );
+  }
+
+--- MÓDULO DE CAPTCHA ---
+
+1. CaptchaProvider (Interfaz principal)
+- Función: Define un contrato o estructura general que deben seguir todas las clases encargadas de resolver el reCAPTCHA, 
+especificando los métodos obligatorios para obtener el token y para invalidarlo.
+
+2. RecaptchaWebViewProvider (Implementación real)
+- Función: Se encarga de conectarse al servicio de Google reCAPTCHA utilizando un navegador invisible (WebView). 
+Carga un script web en memoria, ejecuta el motor de reCAPTCHA para generar el token de seguridad y lo comunica de vuelta al código de la aplicación mediante un canal de JavaScript.
+
+3. CaptchaCacheado (Optimizador y Administrador de Memoria)
+- Función: Almacena temporalmente el token obtenido por un tiempo determinado (por ejemplo, 5 minutos). 
+Si la aplicación vuelve a solicitar un token antes de que expire ese tiempo, reutiliza el token guardado en lugar de volver a abrir el navegador o hacer otra petición innecesaria. También evita que se lancen múltiples validaciones en paralelo si el usuario presiona un botón repetidas veces.
+
+4. SinCaptcha (Modo de prueba o Bypass)
+- Función: Una implementación alternativa que no realiza ninguna validación real y siempre devuelve un valor nulo. 
+Se utiliza principalmente para pruebas locales o entornos de desarrollo donde no se requiere o no está activo el reCAPTCHA.

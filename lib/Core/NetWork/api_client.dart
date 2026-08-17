@@ -7,6 +7,8 @@ class ApiClient {
 
   ApiClient({
     this.baseUrl = 'https://consultas.contraloria.gob.do/verificacgr/api/Consulta/',
+    //Prueba de url especifica con rnc de claro
+    //this.baseUrl = 'https://consultas.contraloria.gob.do/verificacgr/api/Consulta/GetTramitesProveedor?nodocumento=101001577',
     http.Client? httpClient,
   }) : _httpClient = httpClient ?? http.Client();
 
