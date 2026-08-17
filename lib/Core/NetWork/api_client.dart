@@ -6,7 +6,7 @@ class ApiClient {
   final http.Client _httpClient;
 
   ApiClient({
-    required this.baseUrl,
+    this.baseUrl = 'https://consultas.contraloria.gob.do/verificacgr/api/Consulta/',
     http.Client? httpClient,
   }) : _httpClient = httpClient ?? http.Client();
 
@@ -18,7 +18,11 @@ class ApiClient {
     Map<String, String>? queryParams,
     Map<String, String>? headers,
   }) async {
-    final uri = Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
+   // 2. Concatenamos base + endpoint y pasamos los queryParams a Uri.https / Uri.parse
+    final baseUri = Uri.parse('$baseUrl$endpoint');
+    final uri = queryParams != null && queryParams.isNotEmpty
+        ? baseUri.replace(queryParameters: queryParams)
+        : baseUri;
 
     try {
       final response = await _httpClient.get(

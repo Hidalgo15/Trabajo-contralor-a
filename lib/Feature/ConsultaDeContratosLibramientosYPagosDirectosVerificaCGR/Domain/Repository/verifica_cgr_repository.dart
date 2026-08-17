@@ -1,6 +1,6 @@
 import 'package:consultas_y_contrataciones/Core/Captcha/captcha_provider.dart';
 import 'package:consultas_y_contrataciones/Core/Captcha/sin_captcha.dart';
-import 'package:consultas_y_contrataciones/Core/Network/ApiClient.dart';
+import 'package:consultas_y_contrataciones/Core/NetWork/api_client.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/consulta_resultado_entity.dart';
 
 
