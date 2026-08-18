@@ -1,4 +1,4 @@
-import 'package:consultas_y_contrataciones/Core/Network/api_client.dart';
+import 'package:consultas_y_contrataciones/Core/NetWork/api_client.dart';
 
 abstract class GenericRepository<T> {
   final ApiClient apiClient;

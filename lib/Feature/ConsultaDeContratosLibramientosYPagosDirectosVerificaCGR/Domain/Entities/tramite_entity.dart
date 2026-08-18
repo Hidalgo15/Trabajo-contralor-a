@@ -1,49 +1,76 @@
 import 'package:consultas_y_contrataciones/Core/Json/json_row.dart';
 
-enum TipoEstadoTramite { requiereInformacion, rechazado, normal }
+import 'estado_tramite.dart';
 
+/// Un libramiento o un pago directo.
+///
+/// Ambos llegan mezclados en el mismo arreglo `libramientos` de la respuesta;
+/// la separacion es responsabilidad del cliente y se hace mirando la columna
+/// `sistema` (ver [esLibramiento] / [esPagoDirecto]).
+///
+/// Las llaves NO son estables: el backend arma estas filas como `dynamic` desde
+/// el `DataReader`, asi que son los nombres de columna del stored procedure con
+/// su casing original. Por eso todo se lee via [JsonRow] con varios candidatos.
 class TramiteEntity {
-  final String numero;
-  final String concepto;
-  final String fecha;
-  final String estado;
-  final double monto;
-  final String institucion;
-  final TipoEstadoTramite tipoEstado;
-
   const TramiteEntity({
-    required this.numero,
-    required this.concepto,
-    required this.fecha,
-    required this.estado,
-    required this.monto,
-    required this.institucion,
-    required this.tipoEstado,
+    required this.datos,
+    this.institucion,
+    this.beneficiario,
+    this.documento,
+    this.periodo,
+    this.numeroOrdenPago,
+    this.certificacion,
+    this.monto,
+    this.moneda,
+    this.fechaRegistro,
+    this.sistema,
+    this.estadoTexto,
   });
+
+  /// Fila cruda, por si el stored procedure agrega columnas nuevas.
+  final JsonRow datos;
+
+  final String? institucion;
+  final String? beneficiario;
+  final String? documento;
+
+  /// Año presupuestario. Llega como entero.
+  final String? periodo;
+  final String? numeroOrdenPago;
+
+  /// Codigo de la certificacion (p. ej. `ALBS-0067805-2026`). No lo muestra el
+  /// portal web en la tabla, pero viene en la respuesta y sirve para el PDF.
+  final String? certificacion;
+
+  final num? monto;
+  final String? moneda;
+  final DateTime? fechaRegistro;
+  final String? sistema;
+  final String? estadoTexto;
 
   factory TramiteEntity.fromJson(Map<String, dynamic> json) {
     final row = JsonRow(json);
-    final estadoTexto = row.texto(['estado', 'estado_tramite', 'estatus'], defecto: 'En proceso');
-
     return TramiteEntity(
-      numero: row.texto(['num_tramite', 'numero', 'numtramite', 'secuencial']),
-      concepto: row.texto(['concepto', 'concepto_pago', 'detalle', 'objeto_contratacion']),
-      fecha: row.texto(['fecha_registro', 'fecha', 'fecha_ingreso']),
-      estado: estadoTexto,
-      monto: row.monto(['monto', 'monto_bruto', 'monto_contrato', 'valor']),
-      institucion: row.texto(['institucion', 'nombre_institucion', 'capitulo']),
-      tipoEstado: _evaluarEstado(estadoTexto),
+      datos: row,
+      institucion: row.texto(['Institucion']),
+      beneficiario: row.texto(['beneficiario']),
+      documento: row.texto(['documento']),
+      periodo: row.texto(['Periodo']),
+      numeroOrdenPago: row.texto(['NumeroOrdenPago']),
+      certificacion: row.texto(['certificacion', 'codigo']),
+      monto: row.numero(['monto']),
+      moneda: row.texto(['moneda']),
+      fechaRegistro: row.fecha(['fecha_registro', 'Fecha_Registro']),
+      sistema: row.texto(['Sistema']),
+      estadoTexto: row.texto(['EstadoTramite', 'estadotramite']),
     );
   }
 
-  static TipoEstadoTramite _evaluarEstado(String texto) {
-    final mayus = texto.toUpperCase();
-    if (RegExp(r'\bRI\b').hasMatch(mayus)) {
-      return TipoEstadoTramite.requiereInformacion;
-    }
-    if (mayus.contains('RECHAZADO') || mayus.contains('RECHAZO DE TRÁMITE')) {
-      return TipoEstadoTramite.rechazado;
-    }
-    return TipoEstadoTramite.normal;
-  }
+  EstadoTramite get estado => EstadoTramite.evaluar(estadoTexto);
+
+  bool get esLibramiento =>
+      (sistema ?? '').toLowerCase().contains('libramiento');
+
+  bool get esPagoDirecto =>
+      (sistema ?? '').toLowerCase().contains('pago directo');
 }
