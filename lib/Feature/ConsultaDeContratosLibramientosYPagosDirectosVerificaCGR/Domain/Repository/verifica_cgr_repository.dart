@@ -55,6 +55,10 @@ class VerificaCgrRepository implements IVerificaCgrRepository {
     try {
       json = await dataSource.obtenerTramites(limpio);
     } on ApiException catch (e) {
+      debugPrint(
+        'Verifica CGR: fallo GetTramitesProveedor '
+        '(HTTP ${e.codigo ?? "sin codigo"}) -> ${e.detalle ?? e.mensaje}',
+      );
       throw VerificaCgrException(
         e.mensaje,
         codigo: e.codigo,
@@ -83,6 +87,14 @@ class VerificaCgrRepository implements IVerificaCgrRepository {
 
     final token = await captchaProvider.obtenerToken();
     if (token == null || token.isEmpty) {
+      // Causas tipicas: el script de Google no cargo (sin red, o la red
+      // intercepta TLS y el WebView rechaza el certificado), el WebView no
+      // estaba montado, o se agoto el timeout de 20 s.
+      debugPrint(
+        'Verifica CGR: el WebView no devolvio token de reCAPTCHA. '
+        'Revisa que RecaptchaHost este montado y que el dispositivo alcance '
+        'https://www.google.com/recaptcha/api.js',
+      );
       throw const VerificaCgrException(
         'No se pudo completar la verificación de seguridad. '
         'Verifique su conexión e intente de nuevo.',
@@ -93,6 +105,10 @@ class VerificaCgrRepository implements IVerificaCgrRepository {
     try {
       resultado = await dataSource.validarCaptcha(token);
     } on ApiException catch (e) {
+      debugPrint(
+        'Verifica CGR: fallo POST /validar '
+        '(HTTP ${e.codigo ?? "sin codigo"}) -> ${e.detalle ?? e.mensaje}',
+      );
       // El token ya viajo: se descarta para que el reintento pida uno nuevo.
       captchaProvider.invalidar();
       throw VerificaCgrException(
@@ -103,6 +119,13 @@ class VerificaCgrRepository implements IVerificaCgrRepository {
     }
 
     if (!resultado.valido) {
+      // El motivo real (score bajo, invalid-input-response,
+      // timeout-or-duplicate, browser-error...) solo sale por aqui: al
+      // ciudadano se le muestra un mensaje generico a proposito.
+      debugPrint(
+        'Verifica CGR: reCAPTCHA rechazado por el backend -> '
+        '${resultado.mensaje ?? "sin detalle"}',
+      );
       // Un token consumido que se reenvia lo rechaza Google por
       // "timeout-or-duplicate", asi que hay que invalidarlo si o si.
       captchaProvider.invalidar();

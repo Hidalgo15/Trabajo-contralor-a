@@ -6,7 +6,7 @@ class VerificaCgrConfig {
   const VerificaCgrConfig({
     this.baseUrl = produccion,
     this.recaptchaSiteKey = siteKeyPublica,
-    this.validarCaptcha = true,
+    this.validarCaptcha = false,
     this.timeout = const Duration(seconds: 60),
   });
 
@@ -43,10 +43,32 @@ class VerificaCgrConfig {
   /// Si es `true`, antes de cada consulta se obtiene un token de reCAPTCHA y
   /// se valida contra `POST /api/Consulta/validar`, igual que el portal web.
   ///
-  /// Advertencia honesta: `GetTramitesProveedor` es `[AllowAnonymous]` y NO
-  /// verifica ningun token del lado del servidor. El captcha del portal es un
-  /// control de cliente, asi que esto da paridad con el web pero no seguridad
-  /// real mientras el backend no exija el token en el mismo request.
+  /// **Viene apagado, y no es un descuido.** Se probo encendido en un
+  /// dispositivo real y Google rechazo el token al primer intento
+  /// (`success: false`, "Captcha no valido o sospechoso"). La causa de fondo
+  /// es que la clave del proyecto es de tipo **reCAPTCHA v3 web**, una
+  /// libreria de navegador: en una app nativa no hay `window.grecaptcha` y
+  /// ejecutarla dentro de un WebView invisible es un camino que Google no
+  /// documenta ni soporta. Una pagina en blanco, sin interaccion ni historial,
+  /// no le genera senales de confianza.
+  ///
+  /// Apagarlo no quita seguridad que hoy exista: `GetTramitesProveedor` es
+  /// `[AllowAnonymous]` y NO verifica ningun token del lado del servidor. El
+  /// captcha del portal web es un control de cliente (un interceptor de axios
+  /// que llama a `/validar` por su cuenta), asi que cualquiera con `curl` ya
+  /// puede consultar el endpoint sin pasar por Google. Bloquear al ciudadano
+  /// por un captcha que el servidor no exige le quitaba el servicio sin
+  /// proteger nada.
+  ///
+  /// Si algun dia se quiere de verdad, hay dos caminos y ninguno es de app:
+  /// exigir el token en el mismo request de datos y validarlo en
+  /// `ConsultaController` antes de tocar la base, o migrar a reCAPTCHA
+  /// Enterprise, que si tiene SDK nativo para Android/iOS pero requiere una
+  /// clave distinta y que el backend valide contra otra API.
+  ///
+  /// La maquinaria quedo completa y probada por si se retoma: basta con
+  /// construir la pantalla con
+  /// `PaginaVerificaCgr(config: VerificaCgrConfig(validarCaptcha: true))`.
   final bool validarCaptcha;
 
   final Duration timeout;

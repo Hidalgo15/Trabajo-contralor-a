@@ -65,9 +65,10 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
 
     final recaptcha = _recaptcha;
 
-    // El caché replica el comportamiento del portal web: guarda el token 5
-    // minutos y evita disparar varias ejecuciones simultáneas si el usuario
-    // toca "Buscar" repetidamente.
+    // Cada consulta pide un token nuevo: los de reCAPTCHA v3 son de un solo
+    // uso y expiran a los 2 minutos, así que reutilizarlos garantiza un
+    // rechazo por "timeout-or-duplicate". La envoltura se conserva solo para
+    // que dos toques seguidos en "Buscar" compartan la misma ejecución.
     final CaptchaProvider captcha =
         recaptcha == null ? const SinCaptcha() : CaptchaCacheado(recaptcha);
 
