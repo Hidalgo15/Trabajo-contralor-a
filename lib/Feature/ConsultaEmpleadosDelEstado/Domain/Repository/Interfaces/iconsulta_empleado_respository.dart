@@ -1,5 +1,5 @@
 
-import 'package:consultas_y_contrataciones/Feature/HubPrincipal/Domain/Entities/empleadoentity.dart';
+import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/Entities/empleadoentity.dart';
 
 abstract class IconsultaEmpleadoRespository {
   /// Lanza `ConsultaEmpleadoException` con un mensaje ya listo para mostrar.
