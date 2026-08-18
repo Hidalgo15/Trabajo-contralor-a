@@ -33,7 +33,8 @@ class ApiException implements Exception {
 /// en IIS y la API cuelga de ahi, no de la raiz del dominio.
 class ApiClient {
   ApiClient({
-    this.baseUrl = 'https://consultas.contraloria.gob.do/verificacgr',
+    //this.baseUrl = 'https://consultas.contraloria.gob.do/verificacgr',
+    this.baseUrl = 'https://consultas.contraloria.gob.do/',
     this.timeout = const Duration(seconds: 60),
     http.Client? httpClient,
   }) : _httpClient = httpClient ?? http.Client();

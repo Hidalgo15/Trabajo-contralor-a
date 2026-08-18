@@ -19,6 +19,7 @@ import 'tramite_entity.dart';
 /// Ojo: NO existe una llave `pagosDirectos`. El backend devuelve los dos tipos
 /// mezclados en `libramientos` y la separacion se hace aqui por la columna
 /// `sistema`, igual que en el portal web.
+
 class ConsultaResultadoEntity {
   const ConsultaResultadoEntity({
     required this.proveedor,
