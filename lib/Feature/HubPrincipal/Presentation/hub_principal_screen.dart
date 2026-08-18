@@ -1,5 +1,5 @@
-import 'package:consultas_y_contrataciones/Core/GeneralFeatures/footer_institucional.dart';
-import 'package:consultas_y_contrataciones/Core/GeneralFeatures/header_institucional.dart';
+import 'package:consultas_y_contrataciones/Core/Presentation/footer_institucional.dart';
+import 'package:consultas_y_contrataciones/Core/Presentation/header_institucional.dart';
 import 'package:flutter/material.dart';
 
 class HubPrincipalScreen extends StatelessWidget {

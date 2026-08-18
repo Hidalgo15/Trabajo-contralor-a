@@ -4,10 +4,12 @@ import 'package:consultas_y_contrataciones/Core/Captcha/captcha_cacheado.dart';
 import 'package:consultas_y_contrataciones/Core/Captcha/captcha_provider.dart';
 import 'package:consultas_y_contrataciones/Core/Captcha/recaptcha_web_view_provider.dart';
 import 'package:consultas_y_contrataciones/Core/Captcha/sin_captcha.dart';
-import 'package:consultas_y_contrataciones/Core/GeneralFeatures/footer_institucional.dart';
-import 'package:consultas_y_contrataciones/Core/GeneralFeatures/header_institucional.dart';
+import 'package:consultas_y_contrataciones/Core/Presentation/footer_institucional.dart';
+import 'package:consultas_y_contrataciones/Core/Presentation/header_institucional.dart';
 import 'package:consultas_y_contrataciones/Core/GeneralFeatures/recaptchahost.dart';
 import 'package:consultas_y_contrataciones/Core/NetWork/api_client.dart';
+import 'package:consultas_y_contrataciones/Core/Presentation/app_loading_overlay.dart';
+import 'package:consultas_y_contrataciones/Core/Presentation/fase_operacion.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Config/verifica_cgr_config.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Data/verifica_cgr_remote_data_source.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/consulta_resultado_entity.dart';
@@ -46,7 +48,7 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
 
   bool _isLoading = false;
   String? _errorMessage;
-  FaseConsulta _fase = FaseConsulta.consultandoTramites;
+  FaseOperacion _fase = FaseOperacion.cargandoDatos;
 
   @override
   void initState() {
@@ -68,8 +70,9 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
     // uso y expiran a los 2 minutos, así que reutilizarlos garantiza un
     // rechazo por "timeout-or-duplicate". La envoltura se conserva solo para
     // que dos toques seguidos en "Buscar" compartan la misma ejecución.
-    final CaptchaProvider captcha =
-        recaptcha == null ? const SinCaptcha() : CaptchaCacheado(recaptcha);
+    final CaptchaProvider captcha = recaptcha == null
+        ? const SinCaptcha()
+        : CaptchaCacheado(recaptcha);
 
     _repository = VerificaCgrRepository(
       VerificaCgrRemoteDataSource(apiClient: _apiClient, config: config),
@@ -87,8 +90,9 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
   }
 
   Future<void> _buscarTramite() async {
-    final documento =
-        VerificaCgrRepository.soloDigitos(_documentoController.text);
+    final documento = VerificaCgrRepository.soloDigitos(
+      _documentoController.text,
+    );
 
     if (!VerificaCgrRepository.documentoValido(documento)) {
       setState(() {
@@ -103,18 +107,18 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
       _isLoading = true;
       _errorMessage = null;
       _fase = widget.config.validarCaptcha
-          ? FaseConsulta.verificandoSeguridad
-          : FaseConsulta.consultandoTramites;
+          ? FaseOperacion.seguridad
+          : FaseOperacion.cargandoDatos;
     });
 
     try {
-      final ConsultaResultadoEntity resultado =
-          await _repository.consultarTramites(
-        documento,
-        onFase: (fase) {
-          if (mounted) setState(() => _fase = fase);
-        },
-      );
+      final ConsultaResultadoEntity resultado = await _repository
+          .consultarTramites(
+            documento,
+            onFase: (fase) {
+              if (mounted) setState(() => _fase = fase);
+            },
+          );
 
       if (!mounted) return;
       setState(() => _isLoading = false);
@@ -124,10 +128,8 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
       // fallo de la consulta.
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => PaginaResultadosCgr(
-            documento: documento,
-            resultado: resultado,
-          ),
+          builder: (_) =>
+              PaginaResultadosCgr(documento: documento, resultado: resultado),
         ),
       );
     } on VerificaCgrException catch (e) {
@@ -218,7 +220,9 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
                                         child: _buildInformacionIzquierda(),
                                       ),
                                       const SizedBox(width: 48),
-                                      Expanded(child: _buildTarjetaFormulario()),
+                                      Expanded(
+                                        child: _buildTarjetaFormulario(),
+                                      ),
                                     ],
                                   )
                                 : Column(
@@ -238,7 +242,7 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
               ],
             ),
 
-            if (_isLoading) _OverlayCarga(fase: _fase),
+            if (_isLoading) AppLoadingOverlay(message: _mensajeDeFase(_fase)),
           ],
         ),
       ),
@@ -268,7 +272,8 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
             ),
             children: [
               const TextSpan(
-                text: 'Acceda de forma segura y transparente a la información '
+                text:
+                    'Acceda de forma segura y transparente a la información '
                     'de sus ',
               ),
               const TextSpan(
@@ -276,7 +281,8 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const TextSpan(
-                text: ' Esta consulta solo mostrará los trámites que se '
+                text:
+                    ' Esta consulta solo mostrará los trámites que se '
                     'encuentren en Contraloría. ',
               ),
               WidgetSpan(
@@ -298,7 +304,9 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
           ),
         ),
         const SizedBox(height: 24),
-        _buildBulletPoint('Información verificada en registros institucionales.'),
+        _buildBulletPoint(
+          'Información verificada en registros institucionales.',
+        ),
         const SizedBox(height: 8),
         _buildBulletPoint('Resultados claros y actualizados en tiempo real.'),
         const SizedBox(height: 32),
@@ -332,6 +340,13 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
     );
   }
 
+  String _mensajeDeFase(FaseOperacion fase) {
+    return switch (fase) {
+      FaseOperacion.seguridad => 'Verificando seguridad...',
+      FaseOperacion.cargandoDatos => 'Consultando trámites...',
+    };
+  }
+
   Widget _buildBulletPoint(String texto) {
     return Row(
       children: [
@@ -339,10 +354,7 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
           padding: const EdgeInsets.all(2),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(
-              color: VerificaCgrColores.azulBoton,
-              width: 1.5,
-            ),
+            border: Border.all(color: VerificaCgrColores.azulBoton, width: 1.5),
           ),
           child: const Icon(
             Icons.check,
@@ -372,7 +384,11 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 20, offset: Offset(0, 8)),
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 20,
+            offset: Offset(0, 8),
+          ),
         ],
       ),
       child: Column(
@@ -434,8 +450,10 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
               errorMaxLines: 3,
               filled: true,
               fillColor: const Color(0xFFF7FAFC),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 14,
+              ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
                 borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
@@ -471,8 +489,7 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
                   )
                 : const Text(
                     'Buscar Trámite',
-                    style:
-                        TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
             style: ElevatedButton.styleFrom(
               backgroundColor: VerificaCgrColores.azulBoton,
@@ -510,58 +527,6 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Overlay institucional mientras corre la consulta. Bloquea la interacción
-/// para que el usuario no dispare dos consultas seguidas, y dice en qué etapa
-/// va: la verificación de seguridad puede tardar varios segundos.
-class _OverlayCarga extends StatelessWidget {
-  const _OverlayCarga({required this.fase});
-
-  final FaseConsulta fase;
-
-  @override
-  Widget build(BuildContext context) {
-    final mensaje = switch (fase) {
-      FaseConsulta.verificandoSeguridad => 'Verificando seguridad...',
-      FaseConsulta.consultandoTramites => 'Consultando trámites...',
-    };
-
-    return Positioned.fill(
-      child: ColoredBox(
-        color: const Color(0xE6003870),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                'assets/logos/logo_contraloria_blanco.png',
-                height: 100,
-                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-              ),
-              const SizedBox(height: 22),
-              const SizedBox(
-                width: 180,
-                child: LinearProgressIndicator(
-                  backgroundColor: Colors.white24,
-                  valueColor: AlwaysStoppedAnimation(Colors.white),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                mensaje,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

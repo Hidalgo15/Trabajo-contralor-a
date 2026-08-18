@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:consultas_y_contrataciones/Core/Captcha/captcha_provider.dart';
 import 'package:consultas_y_contrataciones/Core/Captcha/sin_captcha.dart';
 import 'package:consultas_y_contrataciones/Core/NetWork/api_client.dart';
+import 'package:consultas_y_contrataciones/Core/Presentation/fase_operacion.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Config/verifica_cgr_config.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Data/verifica_cgr_remote_data_source.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/consulta_resultado_entity.dart';
@@ -35,7 +36,7 @@ class VerificaCgrRepository implements IVerificaCgrRepository {
   @override
   Future<ConsultaResultadoEntity> consultarTramites(
     String documento, {
-    void Function(FaseConsulta fase)? onFase,
+    void Function(FaseOperacion fase)? onFase,
   }) async {
     final limpio = soloDigitos(documento);
     if (!documentoValido(limpio)) {
@@ -45,11 +46,11 @@ class VerificaCgrRepository implements IVerificaCgrRepository {
     }
 
     if (config.validarCaptcha) {
-      onFase?.call(FaseConsulta.verificandoSeguridad);
+      onFase?.call(FaseOperacion.seguridad);
     }
     await _validarCaptchaSiAplica();
 
-    onFase?.call(FaseConsulta.consultandoTramites);
+    onFase?.call(FaseOperacion.cargandoDatos);
 
     final Map<String, dynamic> json;
     try {

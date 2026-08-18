@@ -1,13 +1,9 @@
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/consulta_resultado_entity.dart';
+import 'package:consultas_y_contrataciones/Core/Presentation/fase_operacion.dart';
 
 /// Etapas de la consulta, para que la pantalla pueda decirle al usuario en qué
 /// va. La verificación de seguridad puede tardar varios segundos (WebView +
 /// Google + backend), así que dejarla sin explicar se siente como un cuelgue.
-enum FaseConsulta {
-  verificandoSeguridad,
-  consultandoTramites,
-}
-
 abstract class IVerificaCgrRepository {
   /// Lanza `VerificaCgrException` con un mensaje ya listo para mostrar.
   ///
@@ -15,6 +11,6 @@ abstract class IVerificaCgrRepository {
   /// no tiene trámites pendientes.
   Future<ConsultaResultadoEntity> consultarTramites(
     String documento, {
-    void Function(FaseConsulta fase)? onFase,
+    void Function(FaseOperacion fase)? onFase,
   });
 }

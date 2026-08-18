@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:consultas_y_contrataciones/Core/Formatos/formatos.dart';
-import 'package:consultas_y_contrataciones/Core/GeneralFeatures/footer_institucional.dart';
+import 'package:consultas_y_contrataciones/Core/Presentation/footer_institucional.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Data/Pdf/verifica_cgr_pdf_service.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/consulta_resultado_entity.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/contrato_entity.dart';
