@@ -18,7 +18,7 @@ class EmpleadoEntity {
   final String? nombre;
   final String? institucion;
   final String? funcion;
-  final String? salario;
+  final num? salario;
   final String? fechaPeriodo;
   final String? cuenta;
   final String? descripcionCuenta;
@@ -33,7 +33,7 @@ class EmpleadoEntity {
       nombre: row.texto(['nombre']),
       institucion: row.texto(['institucion']),
       funcion: row.texto(['funcion']),
-      salario: row.texto(['salario']),
+      salario: row.numero(['salario']),
       fechaPeriodo: row.texto(['fecha_periodo']),
       cuenta: row.texto(['cuenta']),
       descripcionCuenta: row.texto(['descripcion_cuenta']),

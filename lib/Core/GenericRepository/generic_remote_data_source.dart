@@ -1,9 +1,9 @@
 import 'package:consultas_y_contrataciones/Core/NetWork/api_client.dart';
 
-abstract class GenericRepository<T> {
+abstract class generic_remote_data_source<T> {
   final ApiClient apiClient;
 
-  GenericRepository(this.apiClient);
+  generic_remote_data_source(this.apiClient);
 
   /// Método genérico para consultar un recurso por parámetros/filtros
   Future<T> fetchOne(

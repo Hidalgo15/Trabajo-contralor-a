@@ -1,3 +1,6 @@
+import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/Repository/consulta_empleado_repository.dart';
+import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/exception/consulta_empleado_exception.dart';
+import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Presentation/pagina_detalles_empleado.dart';
 import 'package:flutter/material.dart';
 import 'package:consultas_y_contrataciones/Core/Presentation/footer_institucional.dart';
 import 'package:consultas_y_contrataciones/Core/Presentation/header_institucional.dart';
@@ -28,38 +31,64 @@ class _PaginaConsultaEmpleadosState extends State<PaginaConsultaEmpleados> {
   }
 
   Future<void> _buscarEmpleado() async {
-    if (_cedulaController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Por favor, ingrese un número de cédula"),
-          backgroundColor: rojoCaribe,
+    final cedula = _cedulaController.text.trim();
+
+  if (cedula.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Por favor, ingrese un número de cédula"),
+        backgroundColor: rojoCaribe,
+      ),
+    );
+    return;
+  }
+
+  if (!_isNotRobot) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Por favor, confirme que no es un robot"),
+        backgroundColor: rojoCaribe,
+      ),
+    );
+    return;
+  }
+
+  setState(() => _isLoading = true);
+
+  try {
+    // Instancia del repositorio que realiza la petición HTTP a Contraloría
+    final repository = ConsultaEmpleadoRepository();
+    final resultado = await repository.obtenerEmpleado(cedula);
+
+    if (!mounted) return;
+
+    // Navegación a la página de resultados pasando la entidad del empleado
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PaginaDetallesEmpleado(
+          empleadoData: resultado,
         ),
-      );
-      return;
-    }
+      ),
+    );
+  } catch (e) {
+    if (!mounted) return;
 
-    if (!_isNotRobot) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Por favor, confirme que no es un robot"),
-          backgroundColor: rojoCaribe,
+    // Manejo de errores con SnackBar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          e is ConsultaEmpleadoException
+              ? e.mensaje
+              : "Ocurrió un error al consultar el servidor.",
         ),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
-    setState(() => _isLoading = false);
-
+        backgroundColor: rojoCaribe,
+      ),
+    );
+  } finally {
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Buscando empleado con cédula: ${_cedulaController.text}"),
-          backgroundColor: azulMedianoche,
-        ),
-      );
+      setState(() => _isLoading = false);
     }
+  }
   }
 
   @override
