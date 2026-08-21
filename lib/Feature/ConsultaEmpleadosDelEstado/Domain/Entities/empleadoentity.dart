@@ -34,9 +34,10 @@ class EmpleadoEntity {
       institucion: row.texto(['institucion']),
       funcion: row.texto(['funcion']),
       salario: row.numero(['salario']),
-      fechaPeriodo: row.texto(['fecha_periodo']),
+      fechaPeriodo: row.texto(['fecha']),
       cuenta: row.texto(['cuenta']),
       descripcionCuenta: row.texto(['descripcion_cuenta']),
     );
+
   }
 }

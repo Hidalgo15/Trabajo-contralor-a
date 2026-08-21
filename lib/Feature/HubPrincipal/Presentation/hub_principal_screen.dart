@@ -98,14 +98,14 @@ class HubPrincipalScreen extends StatelessWidget {
                                 _buildOpcionCard(
                                   context: context,
                                   titulo: "Consultar correspondencia",
-                                  descripcion: "Próximamente disponible.",
+                                  descripcion: "Consulta de correspondencia.",
                                   icono: Icons.find_in_page_outlined,
                                   ruta: '/consulta-correspondencia',
                                 ),
                                 _buildOpcionCard(
                                   context: context,
                                   titulo: "Consultar empleados del Estado",
-                                  descripcion: "Próximamente disponible.",
+                                  descripcion: "Consulta de empleados activos del Estado.",
                                   icono: Icons.find_in_page_outlined,
                                   ruta: '/consulta-empleados',
                                 ),

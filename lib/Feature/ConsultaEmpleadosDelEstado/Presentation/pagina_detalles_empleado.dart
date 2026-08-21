@@ -363,8 +363,8 @@ class PaginaDetallesEmpleado extends StatelessWidget {
                                 _lineaInfo("Cédula:", empleadoData.cedula ?? "N/A"),
                                 const SizedBox(height: 8),
                                 _lineaInfo("Nombre:", empleadoData.nombre ?? "N/A"),
-                                const SizedBox(height: 8),
-                                _lineaInfo("Empleado:", "Gobierno Central"),
+                                //const SizedBox(height: 8),
+                                //_lineaInfo("Empleado:", "Gobierno Central"),
 
                                 const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -382,7 +382,7 @@ class PaginaDetallesEmpleado extends StatelessWidget {
                                       : "N/A",
                                 ),
                                 const SizedBox(height: 8),
-                                _lineaInfo("Fecha/Período:", detalle?.fechaPeriodo ?? "N/A"),
+                                _lineaInfo("Fecha/Período:", detalle?.fechaPeriodo != null ? detalle!.fechaPeriodo!.toString().split(' ')[0] : "N/A"),
                                 const SizedBox(height: 8),
                                 _lineaInfo("Cuenta:", detalle?.cuenta ?? "N/A"),
                                 const SizedBox(height: 8),
