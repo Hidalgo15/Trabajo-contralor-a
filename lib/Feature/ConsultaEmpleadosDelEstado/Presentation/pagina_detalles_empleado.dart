@@ -268,6 +268,7 @@ class PaginaDetallesEmpleado extends StatelessWidget {
 
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PaginaDetallesEmpleado extends StatelessWidget {
   const PaginaDetallesEmpleado({
@@ -375,10 +376,28 @@ class PaginaDetallesEmpleado extends StatelessWidget {
                                 const SizedBox(height: 8),
                                 _lineaInfo("Función/Cargo:", detalle?.funcion ?? "N/A"),
                                 const SizedBox(height: 8),
+                                
+                                
+                                /*
                                 _lineaInfo(
                                   "Salario:",
                                   detalle?.salario != null
-                                      ? "RD\$ ${detalle!.salario!.toStringAsFixed(2)}"
+                                      ? "RD\$ ${detalle!.salario!.toDouble().toStringAsFixed(2)}"
+                                      : "N/A",
+                                ),
+
+                                */
+
+                                  //Para añadir la coma como separador de miles y el punto como separador decimal, se utiliza NumberFormat.currency de la librería intl.
+
+                                _lineaInfo(
+                                  "Salario:",
+                                  detalle?.salario != null
+                                      ? NumberFormat.currency(
+                                          symbol: 'RD\$ ',
+                                          decimalDigits: 2,
+                                          locale: 'en_US', // Mantiene la coma para miles y punto para decimales
+                                        ).format(detalle!.salario)
                                       : "N/A",
                                 ),
                                 const SizedBox(height: 8),

@@ -12,16 +12,19 @@ class EmpleadoEntity {
     required this.fechaPeriodo,
     required this.cuenta,
     required this.descripcionCuenta,
+
   });
 
   final String? cedula;
   final String? nombre;
   final String? institucion;
   final String? funcion;
-  final num? salario;
+ // final num? salario;
   final String? fechaPeriodo;
   final String? cuenta;
   final String? descripcionCuenta;
+
+  final double? salario;  
 
   final JsonRow datos;
   
@@ -33,7 +36,7 @@ class EmpleadoEntity {
       nombre: row.texto(['nombre']),
       institucion: row.texto(['institucion']),
       funcion: row.texto(['funcion']),
-      salario: row.numero(['salario']),
+      salario: row.GetSalarios(['salario']),
       fechaPeriodo: row.texto(['fecha']),
       cuenta: row.texto(['cuenta']),
       descripcionCuenta: row.texto(['descripcion_cuenta']),

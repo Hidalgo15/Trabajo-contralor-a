@@ -61,6 +61,15 @@ class JsonRow {
     return num.tryParse(limpio);
   }
 
+   /// Numero tolerante a que SQL lo mande como texto con separadores de miles.
+  double? GetSalarios(List<String> nombres) {
+    final v = valor(nombres);
+    if (v == null) return null;
+    if (v is double) return v;
+    final limpio = v.toString().replaceAll(',', '').replaceAll(r'$', '').trim();
+    return double.tryParse(limpio);
+  }
+
   /// Fecha ISO-8601 (`2026-08-17T00:00:00`, que es como llega hoy). Si alguna
   /// columna viniera como texto libre devolvemos `null` en vez de reventar.
   DateTime? fecha(List<String> nombres) {
