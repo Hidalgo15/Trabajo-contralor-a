@@ -38,60 +38,85 @@ class _PaginaInicioState extends State<PaginaInicio> {
     final scope = AppShellScope.of(context);
     final visibles = _visibles;
 
+    // Cuánto sobresale el buscador de la zona azul hacia la zona blanca, para
+    // que quede a caballo entre ambas secciones.
+    const overlap = 26.0;
+
     return Column(
       children: [
-        AppHeader(
-          mostrarLogo: true,
-          accion: HeaderButton(
-            icono: Icons.help_outline,
-            tooltip: 'Ayuda',
-            onTap: () => scope.irAPestana(AppTab.ayuda),
-          ),
-        ),
-        Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [AppColors.marcaProfundo, AppColors.marca],
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Column(
+              children: [
+                AppHeader(
+                  mostrarLogo: true,
+                  accion: HeaderButton(
+                    icono: Icons.help_outline,
+                    tooltip: 'Ayuda',
+                    onTap: () => scope.irAPestana(AppTab.ayuda),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [AppColors.marcaProfundo, AppColors.marca],
+                    ),
+                    // Curva inferior de la sección azul (¡Hola!) para un
+                    // acabado más suave entre el azul y el blanco.
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(AppDimens.radioLg + 8),
+                    ),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(18, 4, 18, AppDimens.xl),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '¡Hola!',
+                        style: TextStyle(
+                          fontFamily: AppTypography.display,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 27,
+                          letterSpacing: -0.5,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Consultas públicas de la Contraloría, en un solo lugar.',
+                        style: TextStyle(
+                          fontFamily: AppTypography.cuerpo,
+                          fontSize: 13,
+                          color: Colors.white.withValues(alpha: 0.8),
+                        ),
+                      ),
+                      // Reserva de espacio: el buscador se posiciona por el
+                      // [Stack] de abajo para poder sobresalir hacia el blanco.
+                      const SizedBox(height: overlap + AppDimens.lg),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-          padding: const EdgeInsets.fromLTRB(18, 4, 18, 22),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                '¡Hola!',
-                style: TextStyle(
-                  fontFamily: AppTypography.display,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 27,
-                  letterSpacing: -0.5,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'Consultas públicas de la Contraloría, en un solo lugar.',
-                style: TextStyle(
-                  fontFamily: AppTypography.cuerpo,
-                  fontSize: 13,
-                  color: Colors.white.withValues(alpha: 0.8),
-                ),
-              ),
-              const SizedBox(height: AppDimens.lg),
-              SearchField(
+            Positioned(
+              left: 18,
+              right: 18,
+              bottom: -overlap,
+              child: SearchField(
                 onChanged: (v) => setState(() => _filtro = v),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.fromLTRB(
               AppDimens.lg,
-              AppDimens.lg + 2,
+              overlap + AppDimens.sm,
               AppDimens.lg,
               0,
             ),

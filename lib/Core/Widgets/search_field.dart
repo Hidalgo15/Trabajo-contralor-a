@@ -50,7 +50,15 @@ class SearchField extends StatelessWidget {
                 ),
                 decoration: InputDecoration(
                   isCollapsed: true,
+                  // El tema global viene con `filled: true` y fondo gris
+                  // (superficieAlt). Lo anulamos para que el TextField no pinte
+                  // su propia "caja gris" y el fondo blanco redondeado del
+                  // [Material] exterior actúe como único campo.
+                  filled: false,
+                  fillColor: Colors.transparent,
                   contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                   border: InputBorder.none,
                   hintText: hintText,
                   hintStyle: const TextStyle(
