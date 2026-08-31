@@ -43,9 +43,9 @@ class PaginaServicios extends StatelessWidget {
                 crossAxisCount: 2,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: AppDimens.md - 1,
-                mainAxisSpacing: AppDimens.md - 1,
-                childAspectRatio: 0.82,
+                crossAxisSpacing: AppDimens.sm + 2,
+                mainAxisSpacing: AppDimens.sm + 2,
+                childAspectRatio: 1.5,
                 children: [
                   for (final s in serviciosApp)
                     ServiceCard(
