@@ -1,10 +1,14 @@
 import 'package:consultas_y_contrataciones/Feature/HubPrincipal/Presentation/hub_principal_screen.dart';
 import 'package:flutter/material.dart';
+import 'Core/Theme/app_theme.dart';
+import 'Core/Theme/fuentes_licencia.dart';
 import 'Feature/ConsultaDeCertificaciónDeCargos/Presentation/paginaconsultacontraloria.dart';
 import 'Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Presentation/paginaverificacgr.dart';
 import 'Feature/ConsultaEmpleadosDelEstado/Presentation/paginaconsultaempleados.dart';
 import 'Feature/ConsultaCorrespondencia/Presentation/paginaconsultacorrespondencia.dart';
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  registrarLicenciasDeFuentes();
   runApp(const MiAppContraloria());
 }
 
@@ -16,12 +20,9 @@ class MiAppContraloria extends StatelessWidget {
     return MaterialApp(
       title: 'Portal Contraloría',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF003870),
-        ),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.claro,
+      darkTheme: AppTheme.oscuro,
+      themeMode: ThemeMode.system,
       // Ruta inicial al abrir la App
       initialRoute: '/',
       routes: {
