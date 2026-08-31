@@ -30,6 +30,15 @@ class MiAppContraloria extends StatelessWidget {
           darkTheme: AppTheme.oscuro,
           themeMode: tema.mode,
           home: const AppShell(),
+          builder: (context, child) {
+            final mq = MediaQuery.of(context);
+            return MediaQuery(
+              data: mq.copyWith(
+                textScaler: TextScaler.linear(tema.tamanoTexto.escala),
+              ),
+              child: child!,
+            );
+          },
         ),
       ),
     );

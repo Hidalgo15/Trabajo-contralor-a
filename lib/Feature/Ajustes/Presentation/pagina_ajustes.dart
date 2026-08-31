@@ -10,10 +10,52 @@ import 'package:consultas_y_contrataciones/Core/Widgets/app_header.dart';
 class PaginaAjustes extends StatelessWidget {
   const PaginaAjustes({super.key});
 
+  void _elegirTamanoTexto(BuildContext context) {
+    final tema = ThemeScope.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(20, 4, 20, 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Tamaño de texto',
+                  style: TextStyle(
+                    fontFamily: AppTypography.display,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+            for (final t in TamanoTexto.values)
+              ListTile(
+                title: Text(t.label),
+                trailing: t == tema.tamanoTexto
+                    ? Icon(Icons.check, color: context.colores.azul)
+                    : null,
+                onTap: () {
+                  tema.establecerTexto(t);
+                  Navigator.of(sheetContext).pop();
+                },
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = context.colores;
     final scope = AppShellScope.of(context);
+    final tema = ThemeScope.of(context);
 
     return Column(
       children: [
@@ -43,8 +85,8 @@ class PaginaAjustes extends StatelessWidget {
                   _Fila(
                     icono: Icons.format_size_outlined,
                     label: 'Tamaño de texto',
-                    valor: 'Estándar',
-                    onTap: () {},
+                    valor: tema.tamanoTexto.label,
+                    onTap: () => _elegirTamanoTexto(context),
                   ),
                 ],
               ),

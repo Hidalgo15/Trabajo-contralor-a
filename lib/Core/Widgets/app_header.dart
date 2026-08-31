@@ -99,12 +99,12 @@ class AppHeader extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, AppDimens.md + 2),
           child: SizedBox(
-            height: 40,
+            height: 44,
             child: Row(
               children: [
                 _leading(context),
                 Expanded(child: centro),
-                accion ?? const SizedBox(width: 40),
+                accion ?? const SizedBox(width: 44),
               ],
             ),
           ),
@@ -128,7 +128,7 @@ class AppHeader extends StatelessWidget {
           onTap: () => Navigator.of(context).maybePop(),
         );
       case HeaderLeading.ninguno:
-        return const SizedBox(width: 40);
+        return const SizedBox(width: 44);
     }
   }
 }
@@ -155,8 +155,8 @@ class HeaderButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppDimens.radioSm + 1),
         child: SizedBox(
-          width: 40,
-          height: 40,
+          width: 44,
+          height: 44,
           child: Icon(icono, color: Colors.white, size: 20),
         ),
       ),
