@@ -66,7 +66,6 @@ class _PaginaConsultaContraloriaState extends State<PaginaConsultaContraloria> {
             ),
             children: [
               FormCard(
-                icono: Icons.assignment_ind_outlined,
                 titulo: 'Certificación de Cargos',
                 descripcion:
                     'Consulta en qué fase se encuentra tu solicitud de '

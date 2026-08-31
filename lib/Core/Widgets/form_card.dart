@@ -4,44 +4,41 @@ import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_card.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/brand_logo.dart';
 
-/// Ficha de formulario del rediseño (estilo del prototipo v2): ícono, título,
-/// descripción y una lista de contenidos separados por un espacio uniforme.
+/// Ficha de formulario del rediseño (estilo del prototipo v2): logo oficial,
+/// título, descripción y una lista de contenidos separados por un espacio
+/// uniforme.
 class FormCard extends StatelessWidget {
   const FormCard({
     super.key,
-    required this.icono,
     required this.titulo,
     required this.descripcion,
     required this.children,
   });
 
-  final IconData icono;
   final String titulo;
   final String descripcion;
   final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
-    final c = context.colores;
-
     return AppCard(
       elevada: true,
       padding: const EdgeInsets.all(AppDimens.xl - 4),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              color:
-                  Color.alphaBlend(c.azul.withValues(alpha: 0.11), c.superficie),
-              borderRadius: BorderRadius.circular(AppDimens.radioMd + 1),
+          const Padding(
+            padding: EdgeInsets.only(top: 2, bottom: AppDimens.md),
+            child: Center(
+              child: BrandLogo(
+                height: 100,
+                semanticLabel:
+                    'Contraloría General de la República Dominicana',
+              ),
             ),
-            child: Icon(icono, size: 22, color: c.azul),
           ),
-          const SizedBox(height: AppDimens.md),
           Text(
             titulo,
             style: const TextStyle(

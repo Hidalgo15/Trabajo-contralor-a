@@ -177,7 +177,6 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
                 ),
                 children: [
                   FormCard(
-                    icono: Icons.verified_outlined,
                     titulo: 'Verifica CGR',
                     descripcion:
                         'Accede de forma segura al estado de tus trámites en '

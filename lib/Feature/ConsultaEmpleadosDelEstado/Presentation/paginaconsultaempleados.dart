@@ -79,7 +79,6 @@ class _PaginaConsultaEmpleadosState extends State<PaginaConsultaEmpleados> {
             ),
             children: [
               FormCard(
-                icono: Icons.badge_outlined,
                 titulo: 'Empleados del Estado',
                 descripcion:
                     'Consulta la nómina pública del Estado por número de cédula '

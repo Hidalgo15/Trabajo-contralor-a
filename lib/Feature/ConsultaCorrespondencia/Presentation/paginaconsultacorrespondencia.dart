@@ -72,7 +72,6 @@ class _PaginaConsultaCorrespondenciaState
             ),
             children: [
               FormCard(
-                icono: Icons.mark_email_read_outlined,
                 titulo: 'Correspondencia',
                 descripcion:
                     'Ingresa el código de registro y la contraseña otorgada '
