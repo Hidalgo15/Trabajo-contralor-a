@@ -43,6 +43,9 @@ class BrandLogo extends StatelessWidget {
       asset,
       height: height,
       fit: BoxFit.contain,
+      // Los PNG del logo son grandes; al reducirlos, medium suaviza el
+      // escalado y evita el aspecto dentado.
+      filterQuality: FilterQuality.medium,
       semanticLabel: semanticLabel,
       excludeFromSemantics: semanticLabel == null,
       errorBuilder: (_, _, _) => Icon(
