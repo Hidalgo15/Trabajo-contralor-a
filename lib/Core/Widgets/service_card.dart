@@ -87,8 +87,8 @@ class _IconoServicio extends StatelessWidget {
   }
 }
 
-/// Versión compacta para los "accesos rápidos" del Inicio (sin flecha, con el
-/// texto resumido).
+/// Tarjeta compacta para los "accesos rápidos" del Inicio: ícono, título y una
+/// línea de resumen, centrados. Pensada para un grid de 3 columnas.
 class QuickCard extends StatelessWidget {
   const QuickCard({
     super.key,
@@ -105,29 +105,36 @@ class QuickCard extends StatelessWidget {
 
     return AppCard(
       onTap: onTap,
-      padding: const EdgeInsets.all(AppDimens.md + 1),
+      padding: const EdgeInsets.symmetric(horizontal: AppDimens.sm, vertical: 12),
       child: MergeSemantics(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _IconoServicio(icono: servicio.icono),
-            const SizedBox(height: AppDimens.sm),
+            Icon(servicio.icono, size: 24, color: c.azul),
+            const SizedBox(height: 8),
             Text(
               servicio.titulo,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontFamily: AppTypography.display,
                 fontWeight: FontWeight.w600,
-                fontSize: 13.5,
-                height: 1.2,
+                fontSize: 13,
+                height: 1.15,
               ),
             ),
             const SizedBox(height: 3),
             Text(
               servicio.resumen,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context)
                   .textTheme
                   .bodySmall
-                  ?.copyWith(color: c.tenue, fontSize: 11.5, height: 1.3),
+                  ?.copyWith(color: c.tenue, fontSize: 11, height: 1.2),
             ),
           ],
         ),
