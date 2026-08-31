@@ -120,8 +120,9 @@ class AppTheme {
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          // Acción principal = rojo institucional.
-          backgroundColor: c.rojo,
+          // Acción principal = azul institucional (el rojo queda como acento
+          // puntual: flechas, badges, indicador de pestaña activa).
+          backgroundColor: c.azul,
           foregroundColor: Colors.white,
           disabledBackgroundColor: c.borde,
           disabledForegroundColor: c.tenue,
