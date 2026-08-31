@@ -1,514 +1,240 @@
-import 'package:consultas_y_contrataciones/Core/Presentation/footer_institucional.dart';
-import 'package:consultas_y_contrataciones/Core/Presentation/header_institucional.dart';
-import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/Entities/consulta_empleado_response_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-
-/*
+import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/app_button.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/app_card.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/app_header.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/form_card.dart';
+import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/Entities/consulta_empleado_response_model.dart';
 
 class PaginaDetallesEmpleado extends StatelessWidget {
-  const PaginaDetallesEmpleado({
-    super.key,
-    required this.empleadoData,
-  });
+  const PaginaDetallesEmpleado({super.key, required this.empleadoData});
 
   final ConsultaEmpleadoResponseModel empleadoData;
 
-  static const Color azulMedianoche = Color(0xFF003870);
-  static const Color azulBoton = Color(0xFF3182CE);
+  String _iniciales(String? nombre) {
+    final partes = (nombre ?? '').trim().split(RegExp(r'\s+'));
+    final letras = partes.where((p) => p.isNotEmpty).take(2).map((p) => p[0]);
+    final j = letras.join().toUpperCase();
+    return j.isEmpty ? '—' : j;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F8),
-      appBar: AppBar(
-        backgroundColor: azulMedianoche,
-        iconTheme: const IconThemeData(color: Colors.white),
-        elevation: 0,
-        title: const Text(
-          "Consulta Empleados del Estado",
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            const HeaderInstitucional(
-              tituloPantalla: 'Consulta Empleados del Estado',
-            ),
-            const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
-            Expanded(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 600),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 24.0,
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 8,
-                            offset: Offset(0, 3),
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Cabecera de la Tarjeta
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFF2F2F2),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(5),
-                                topRight: Radius.circular(5),
-                              ),
-                              border: Border(
-                                bottom: BorderSide(color: Color(0xFFE0E0E0)),
-                              ),
-                            ),
-                            child: const Text(
-                              "Detalles del Empleado",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF333333),
-                              ),
-                            ),
-                          ),
+    final c = context.colores;
+    final detalle =
+        empleadoData.detalles.isNotEmpty ? empleadoData.detalles.first : null;
 
-                          // Datos Generales
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _lineaInfo("Cédula:", empleadoData.cedula ?? "N/A"),
-                                const SizedBox(height: 4),
-                                _lineaInfo("Nombre:", empleadoData.nombre ?? "N/A"),
-                                const SizedBox(height: 4),
-                                _lineaInfo("Empleado:", "Gobierno Central"),
-                                const SizedBox(height: 20),
+    final salarioNum = detalle?.salario;
+    final salario = salarioNum != null
+        ? NumberFormat.currency(
+            locale: 'en_US',
+            symbol: r'RD$ ',
+            decimalDigits: 2,
+          ).format(salarioNum)
+        : 'N/D';
 
-                                // Tabla de Puestos / Sueldos / Cuentas
-                                Table(
-                                  columnWidths: const {
-                                    0: FlexColumnWidth(2.5),
-                                    1: FlexColumnWidth(1.5),
-                                    2: FlexColumnWidth(1.2),
-                                  },
-                                  children: [
-                                    const TableRow(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 8.0),
-                                          child: Text("Institución",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 8.0),
-                                          child: Text("Sueldo",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 8.0),
-                                          child: Text("Cuenta",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                        ),
-                                      ],
-                                    ),
-                                    ...empleadoData.detalles.map(
-                                      (d) => TableRow(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 6.0),
-                                            child: Text(
-                                              d.institucion ?? "-",
-                                              style: const TextStyle(
-                                                  fontSize: 13),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 6.0),
-                                            child: Text(
-                                              d.salario != null
-                                                  ? "RD\$ ${d.salario!.toStringAsFixed(2)}"
-                                                  : "-",
-                                              style: const TextStyle(
-                                                  fontSize: 13),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 6.0),
-                                            child: Text(
-                                              d.cuenta ?? "-",
-                                              style: const TextStyle(
-                                                  fontSize: 13),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 28),
+    final periodoRaw = detalle?.fechaPeriodo;
+    final periodo =
+        periodoRaw != null ? periodoRaw.split(' ').first : 'N/D';
 
-                                // Botón Volver
-                                Center(
-                                  child: ElevatedButton.icon(
-                                    onPressed: () => Navigator.of(context).pop(),
-                                    icon: const Icon(Icons.arrow_back,
-                                        size: 16, color: Colors.white),
-                                    label: const Text(
-                                      "Volver a Consultar",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: azulBoton,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // Banner Informativo Inferior
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 16),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFE3F2FD),
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(5),
-                                bottomRight: Radius.circular(5),
-                              ),
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.info_outline,
-                                    size: 16, color: Color(0xFF1976D2)),
-                                SizedBox(width: 8),
-                                Text(
-                                  "Datos actualizados Julio 2026",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF1976D2),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const FooterInstitucional(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _lineaInfo(String etiqueta, String valor) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
       children: [
-        SizedBox(
-          width: 80,
-          child: Text(
-            etiqueta,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-              color: Color(0xFF2D3748),
-            ),
-          ),
+        const AppHeader(
+          titulo: 'Detalle del empleado',
+          leading: HeaderLeading.atras,
         ),
         Expanded(
-          child: Text(
-            valor,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF2D3748),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AppDimens.lg,
+              AppDimens.lg + 2,
+              AppDimens.lg,
+              AppDimens.xl,
             ),
+            children: [
+              AppCard(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 54,
+                      height: 54,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [c.azul, c.azulProfundo],
+                        ),
+                        borderRadius: BorderRadius.circular(AppDimens.radioLg),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        _iniciales(empleadoData.nombre),
+                        style: const TextStyle(
+                          fontFamily: AppTypography.display,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: AppDimens.md + 1),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            empleadoData.nombre ?? 'N/D',
+                            style: const TextStyle(
+                              fontFamily: AppTypography.display,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16.5,
+                              letterSpacing: -0.2,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Cédula ${empleadoData.cedula ?? 'N/D'}',
+                            style: AppTypography.datos(
+                              color: c.tenue,
+                              fontSize: 12.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppDimens.md),
+              Container(
+                padding: const EdgeInsets.all(AppDimens.md + 3),
+                decoration: BoxDecoration(
+                  color: Color.alphaBlend(
+                    c.rojo.withValues(alpha: 0.09),
+                    c.superficie,
+                  ),
+                  border: Border.all(
+                    color: c.rojo.withValues(alpha: 0.24),
+                  ),
+                  borderRadius: BorderRadius.circular(AppDimens.radioLg),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'SALARIO MENSUAL',
+                      style: TextStyle(
+                        fontFamily: AppTypography.cuerpo,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                        color: c.rechazo,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      salario,
+                      style: AppTypography.datos(
+                        color: c.tinta,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppDimens.md),
+              AppCard(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimens.lg,
+                  vertical: 4,
+                ),
+                child: Column(
+                  children: [
+                    _Fila('Institución', detalle?.institucion ?? 'N/D'),
+                    _Fila('Función / Cargo', detalle?.funcion ?? 'N/D'),
+                    _Fila('Período', periodo),
+                    _Fila('Cuenta', detalle?.cuenta ?? 'N/D', mono: true),
+                    _Fila(
+                      'Descripción',
+                      detalle?.descripcionCuenta ?? 'N/D',
+                      ultima: true,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppDimens.lg),
+              AppButton(
+                label: 'Volver a consultar',
+                icono: Icons.arrow_back,
+                kind: AppButtonKind.ghost,
+                onPressed: () => Navigator.of(context).maybePop(),
+              ),
+              const SizedBox(height: AppDimens.md),
+              const HelperText(
+                icono: Icons.info_outline,
+                texto:
+                    'Fuente: DGCP / SIGEF. Puede variar según el período de '
+                    'pago vigente.',
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 }
-*/
 
-import 'package:intl/intl.dart';
+class _Fila extends StatelessWidget {
+  const _Fila(this.etiqueta, this.valor, {this.mono = false, this.ultima = false});
 
-class PaginaDetallesEmpleado extends StatelessWidget {
-  const PaginaDetallesEmpleado({
-    super.key,
-    required this.empleadoData,
-  });
-
-  final ConsultaEmpleadoResponseModel empleadoData;
-
-  static const Color azulMedianoche = Color(0xFF003870);
-  static const Color azulBoton = Color(0xFF3182CE);
+  final String etiqueta;
+  final String valor;
+  final bool mono;
+  final bool ultima;
 
   @override
   Widget build(BuildContext context) {
-    // Si no hay detalles, se toma un objeto vacío por defecto
-    final detalle = empleadoData.detalles.isNotEmpty
-        ? empleadoData.detalles.first
-        : null;
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F8),
-      appBar: AppBar(
-        backgroundColor: azulMedianoche,
-        iconTheme: const IconThemeData(color: Colors.white),
-        elevation: 0,
-        title: const Text(
-          "Consulta Empleados del Estado",
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            const HeaderInstitucional(
-              tituloPantalla: 'Consulta Empleados del Estado',
+    final c = context.colores;
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: AppDimens.md - 2),
+      decoration: ultima
+          ? null
+          : BoxDecoration(
+              border: Border(bottom: BorderSide(color: c.borde)),
             ),
-            const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
-            Expanded(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 600),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 24.0,
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 8,
-                            offset: Offset(0, 3),
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Cabecera
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFF2F2F2),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(5),
-                                topRight: Radius.circular(5),
-                              ),
-                              border: Border(
-                                bottom: BorderSide(color: Color(0xFFE0E0E0)),
-                              ),
-                            ),
-                            child: const Text(
-                              "Detalles del Empleado",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF333333),
-                              ),
-                            ),
-                          ),
-
-                          // Datos completos extraídos de EmpleadoEntity
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _lineaInfo("Cédula:", empleadoData.cedula ?? "N/A"),
-                                const SizedBox(height: 8),
-                                _lineaInfo("Nombre:", empleadoData.nombre ?? "N/A"),
-                                //const SizedBox(height: 8),
-                                //_lineaInfo("Empleado:", "Gobierno Central"),
-
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                                  child: Divider(color: Color(0xFFE2E8F0)),
-                                ),
-
-                                _lineaInfo("Institución:", detalle?.institucion ?? "N/A"),
-                                const SizedBox(height: 8),
-                                _lineaInfo("Función/Cargo:", detalle?.funcion ?? "N/A"),
-                                const SizedBox(height: 8),
-                                
-                                
-                                /*
-                                _lineaInfo(
-                                  "Salario:",
-                                  detalle?.salario != null
-                                      ? "RD\$ ${detalle!.salario!.toDouble().toStringAsFixed(2)}"
-                                      : "N/A",
-                                ),
-
-                                */
-
-                                  //Para añadir la coma como separador de miles y el punto como separador decimal, se utiliza NumberFormat.currency de la librería intl.
-
-                                _lineaInfo(
-                                  "Salario:",
-                                  detalle?.salario != null
-                                      ? NumberFormat.currency(
-                                          symbol: 'RD\$ ',
-                                          decimalDigits: 2,
-                                          locale: 'en_US', // Mantiene la coma para miles y punto para decimales
-                                        ).format(detalle!.salario)
-                                      : "N/A",
-                                ),
-                                const SizedBox(height: 8),
-                                _lineaInfo("Fecha/Período:", detalle?.fechaPeriodo != null ? detalle!.fechaPeriodo!.toString().split(' ')[0] : "N/A"),
-                                const SizedBox(height: 8),
-                                _lineaInfo("Cuenta:", detalle?.cuenta ?? "N/A"),
-                                const SizedBox(height: 8),
-                                _lineaInfo("Descripción Cuenta:", detalle?.descripcionCuenta ?? "N/A"),
-
-                                const SizedBox(height: 28),
-
-                                Center(
-                                  child: ElevatedButton.icon(
-                                    onPressed: () => Navigator.of(context).pop(),
-                                    icon: const Icon(
-                                      Icons.arrow_back,
-                                      size: 16,
-                                      color: Colors.white,
-                                    ),
-                                    label: const Text(
-                                      "Volver a Consultar",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: azulBoton,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // Pie de Tarjeta
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 16,
-                            ),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFE3F2FD),
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(5),
-                                bottomRight: Radius.circular(5),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.info_outline,
-                                  size: 16,
-                                  color: Color(0xFF1976D2),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "Datos actualizados ${detalle?.fechaPeriodo ?? 'Julio 2026'}",
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF1976D2),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const FooterInstitucional(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _lineaInfo(String etiqueta, String valor) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 140,
-          child: Text(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
             etiqueta,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
-              color: Color(0xFF2D3748),
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.copyWith(color: c.tenue),
+          ),
+          const SizedBox(width: AppDimens.lg),
+          Expanded(
+            child: Text(
+              valor,
+              textAlign: TextAlign.right,
+              style: mono
+                  ? AppTypography.datos(color: c.tinta, fontSize: 13)
+                  : Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(
+                        color: c.tinta,
+                        fontWeight: FontWeight.w500,
+                      ),
             ),
           ),
-        ),
-        Expanded(
-          child: Text(
-            valor,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Color(0xFF4A5568),
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

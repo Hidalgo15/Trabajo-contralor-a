@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:consultas_y_contrataciones/Core/Formatos/formatos.dart';
-import 'package:consultas_y_contrataciones/Core/Presentation/footer_institucional.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/app_button.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/app_header.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/brand_logo.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Data/Pdf/verifica_cgr_pdf_service.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/consulta_resultado_entity.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/contrato_entity.dart';
@@ -36,26 +41,12 @@ class PaginaResultadosCgr extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: VerificaCgrColores.fondoPantalla,
-      appBar: AppBar(
-        backgroundColor: VerificaCgrColores.azulMedianoche,
-        iconTheme: const IconThemeData(color: Colors.white),
-        elevation: 0,
-        title: const Text(
-          'Resultados de la Consulta',
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 900),
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
+    return Column(
+      children: [
+        const AppHeader(titulo: 'Resultados', leading: HeaderLeading.atras),
+        Expanded(
+          child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
                     children: [
                       _Resumen(
                         resultado: resultado,
@@ -131,20 +122,24 @@ class PaginaResultadosCgr extends StatelessWidget {
                       if (resultado.estaVacio)
                         _SinResultados(proveedor: resultado.proveedor),
 
-                      const SizedBox(height: 22),
-                      _Acciones(
-                        resultado: resultado,
-                        onDescargarTodo: () => _descargarTodo(context),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Consulta generada el '
+                        '${Formatos.selloDeTiempo(DateTime.now())}',
+                        textAlign: TextAlign.center,
+                        style: AppTypography.datos(
+                          color: VerificaCgrColores.textoTenue,
+                          fontSize: 11,
+                        ),
                       ),
                     ],
-                  ),
-                ),
-              ),
-            ),
-            const FooterInstitucional(),
-          ],
+          ),
         ),
-      ),
+        _BarraAcciones(
+          resultado: resultado,
+          onDescargarTodo: () => _descargarTodo(context),
+        ),
+      ],
     );
   }
 
@@ -226,23 +221,22 @@ class _Resumen extends StatelessWidget {
     final beneficiario = resultado.beneficiarioGeneral;
     final rpe = resultado.proveedor.rpe;
 
+    final c = context.colores;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppDimens.lg),
       decoration: BoxDecoration(
-        color: VerificaCgrColores.fondoSuave,
-        border: Border.all(color: const Color(0xFFCFE2FF)),
-        borderRadius: BorderRadius.circular(10),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [c.azul, c.azulProfundo],
+        ),
+        borderRadius: BorderRadius.circular(AppDimens.radioLg),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Image.asset(
-              'assets/logos/logo_contraloria.png',
-              height: 60,
-              fit: BoxFit.contain,
-              errorBuilder: (_, _, _) => const SizedBox.shrink(),
-            ),
+          const Center(
+            child: BrandLogo(variante: LogoVariante.blanco, height: 44),
           ),
           const SizedBox(height: 14),
           _DatoResumen(etiqueta: 'No. Documento', valor: documentoMostrado),
@@ -270,18 +264,21 @@ class _DatoResumen extends StatelessWidget {
         children: [
           Text(
             etiqueta,
-            style: const TextStyle(
-              fontSize: 12,
+            style: TextStyle(
+              fontFamily: AppTypography.cuerpo,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: VerificaCgrColores.azulMedianoche,
+              letterSpacing: 0.3,
+              color: Colors.white.withValues(alpha: 0.72),
             ),
           ),
           const SizedBox(height: 2),
           Text(
             valor,
             style: const TextStyle(
+              fontFamily: AppTypography.cuerpo,
               fontSize: 14.5,
-              color: VerificaCgrColores.texto,
+              color: Colors.white,
               height: 1.35,
             ),
           ),
@@ -370,73 +367,53 @@ class _SinResultados extends StatelessWidget {
   }
 }
 
-class _Acciones extends StatelessWidget {
-  const _Acciones({required this.resultado, required this.onDescargarTodo});
+/// Barra de acciones fija al pie de la pantalla de resultados.
+class _BarraAcciones extends StatelessWidget {
+  const _BarraAcciones({
+    required this.resultado,
+    required this.onDescargarTodo,
+  });
 
   final ConsultaResultadoEntity resultado;
   final VoidCallback onDescargarTodo;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (!resultado.estaVacio) ...[
-          ElevatedButton.icon(
-            onPressed: onDescargarTodo,
-            icon: const Icon(Icons.download_rounded, size: 18),
-            label: const Text(
-              'Descargar resultados',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: VerificaCgrColores.azulBoton,
-              foregroundColor: Colors.white,
-              minimumSize: const Size.fromHeight(48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
+    final c = context.colores;
+    return Container(
+      decoration: BoxDecoration(
+        color: c.superficie,
+        border: Border(top: BorderSide(color: c.borde)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppDimens.lg,
+            AppDimens.md,
+            AppDimens.lg,
+            AppDimens.sm,
+          ),
+          child: Column(
+            children: [
+              if (!resultado.estaVacio) ...[
+                AppButton(
+                  label: 'Descargar resultados (PDF)',
+                  icono: Icons.download_rounded,
+                  onPressed: onDescargarTodo,
+                ),
+                const SizedBox(height: AppDimens.sm),
+              ],
+              AppButton(
+                label: 'Nueva consulta',
+                icono: Icons.search,
+                kind: AppButtonKind.ghost,
+                onPressed: () => Navigator.of(context).maybePop(),
               ),
-            ),
-          ),
-          const SizedBox(height: 10),
-        ],
-        OutlinedButton.icon(
-          // "Nueva consulta" vuelve atrás en la pila: el portal web recarga la
-          // página, que en Flutter no aplica.
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(
-            Icons.search,
-            size: 18,
-            color: VerificaCgrColores.azulMedianoche,
-          ),
-          label: const Text(
-            'Nueva consulta',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: VerificaCgrColores.azulMedianoche,
-            ),
-          ),
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size.fromHeight(48),
-            side: const BorderSide(
-              color: VerificaCgrColores.azulMedianoche,
-              width: 1.2,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
-            ),
+            ],
           ),
         ),
-        const SizedBox(height: 18),
-        Text(
-          'Consulta generada el ${Formatos.selloDeTiempo(DateTime.now())}',
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 11.5,
-            height: 1.5,
-            color: VerificaCgrColores.textoTenue,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
