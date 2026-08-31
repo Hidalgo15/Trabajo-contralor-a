@@ -25,6 +25,7 @@ dependencies:
   # Hoja de compartir / imprimir del sistema: en móvil no hay carpeta de
   # descargas universal, así que "Descargar PDF" abre el share sheet.
   printing: ^5.13.0
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:

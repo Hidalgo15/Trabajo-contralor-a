@@ -50,11 +50,11 @@ class _PaginaInicioState extends State<PaginaInicio> {
         ),
         Container(
           width: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [c.azulProfundo, c.azul],
+              colors: [AppColors.marcaProfundo, AppColors.marca],
             ),
           ),
           padding: const EdgeInsets.fromLTRB(18, 4, 18, 22),

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'verifica_cgr_colores.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
 
-/// Fila etiqueta/valor.
-///
-/// En el portal web esto es una tabla de 4 columnas; en 360 dp no cabe, así que
-/// se apila: etiqueta arriba en azul, valor debajo. Es la misma adaptación que
-/// hace el CSS del portal en `@media (max-width: 768px)`.
+/// Fila etiqueta/valor apilada (etiqueta arriba en azul, valor debajo).
 class FilaDetalle extends StatelessWidget {
   const FilaDetalle({
     super.key,
@@ -21,16 +19,12 @@ class FilaDetalle extends StatelessWidget {
 
   final String etiqueta;
   final String? valor;
-
-  /// Alternativa a [valor] cuando hay que pintar un widget (una pastilla de
-  /// estado, un botón "Ver más"...).
   final Widget? contenido;
-
-  /// Para montos: negrita y un poco más grande.
   final bool enfatizarValor;
 
   @override
   Widget build(BuildContext context) {
+    final c = context.colores;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Column(
@@ -38,10 +32,11 @@ class FilaDetalle extends StatelessWidget {
         children: [
           Text(
             etiqueta,
-            style: const TextStyle(
+            style: TextStyle(
+              fontFamily: AppTypography.cuerpo,
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: VerificaCgrColores.azulMedianoche,
+              color: c.azul,
               letterSpacing: 0.2,
             ),
           ),
@@ -50,10 +45,11 @@ class FilaDetalle extends StatelessWidget {
               Text(
                 valor!,
                 style: TextStyle(
+                  fontFamily: AppTypography.cuerpo,
                   fontSize: enfatizarValor ? 15 : 14,
                   fontWeight:
                       enfatizarValor ? FontWeight.w700 : FontWeight.normal,
-                  color: VerificaCgrColores.texto,
+                  color: c.tinta,
                   height: 1.35,
                 ),
               ),
@@ -68,11 +64,8 @@ class DivisorFila extends StatelessWidget {
   const DivisorFila({super.key});
 
   @override
-  Widget build(BuildContext context) => const Divider(
-        height: 1,
-        thickness: 1,
-        color: VerificaCgrColores.bordeSuave,
-      );
+  Widget build(BuildContext context) =>
+      Divider(height: 1, thickness: 1, color: context.colores.borde);
 }
 
 /// Envoltura común de las tarjetas de resultado: franja azul a la izquierda,
@@ -91,21 +84,20 @@ class TarjetaResultado extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // El acento azul de la izquierda es una franja aparte, NO un `Border` con
-    // el lado izquierdo más grueso: Flutter no permite combinar un borde de
-    // lados desiguales con `borderRadius` y lanza excepción al pintar.
+    final c = context.colores;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: VerificaCgrColores.borde),
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: const [
+        color: c.superficie,
+        border: Border.all(color: c.borde),
+        borderRadius: BorderRadius.circular(AppDimens.radioMd),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x14000000),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 6,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -113,32 +105,27 @@ class TarjetaResultado extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(
-              width: 4,
-              child: ColoredBox(color: VerificaCgrColores.azulMedianoche),
-            ),
+            SizedBox(width: 4, child: ColoredBox(color: c.azul)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     padding: const EdgeInsets.fromLTRB(12, 10, 6, 10),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF5F7FB),
-                      border: Border(
-                        bottom:
-                            BorderSide(color: VerificaCgrColores.bordeSuave),
-                      ),
+                    decoration: BoxDecoration(
+                      color: c.superficieAlt,
+                      border: Border(bottom: BorderSide(color: c.borde)),
                     ),
                     child: Row(
                       children: [
                         Expanded(
                           child: Text(
                             institucion,
-                            style: const TextStyle(
+                            style: TextStyle(
+                              fontFamily: AppTypography.cuerpo,
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
-                              color: VerificaCgrColores.azulMedianoche,
+                              color: c.azul,
                               height: 1.3,
                             ),
                           ),
@@ -147,7 +134,7 @@ class TarjetaResultado extends StatelessWidget {
                           IconButton(
                             onPressed: onDescargar,
                             icon: const Icon(Icons.download_rounded),
-                            color: VerificaCgrColores.azulBoton,
+                            color: c.azulEnlace,
                             tooltip: 'Descargar PDF',
                             visualDensity: VisualDensity.compact,
                           ),

@@ -42,8 +42,6 @@ class AppHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.colores;
-
     Widget centro;
     if (mostrarLogo) {
       centro = Center(
@@ -89,11 +87,11 @@ class AppHeader extends StatelessWidget {
     }
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [c.azul, c.azulProfundo],
+          colors: [AppColors.marca, AppColors.marcaProfundo],
         ),
       ),
       child: SafeArea(

@@ -70,6 +70,13 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color rechazo;
   final Color rechazoFondo;
 
+  /// Azul institucional **fijo** (no cambia con el tema). Para las superficies
+  /// de marca que siempre llevan texto blanco: barra superior, tarjeta de
+  /// resumen, pie institucional, menú lateral.
+  static const Color marca = Color(0xFF003876);
+  static const Color marcaProfundo = Color(0xFF002B5B);
+  static const Color rojoMarca = Color(0xFFED1C24);
+
   static const AppColors light = AppColors(
     azul: Color(0xFF003876),
     azulProfundo: Color(0xFF002B5B),

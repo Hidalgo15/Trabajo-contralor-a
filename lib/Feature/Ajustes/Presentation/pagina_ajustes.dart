@@ -4,6 +4,7 @@ import 'package:consultas_y_contrataciones/Core/Navigation/app_shell.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/theme_controller.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_header.dart';
 
 class PaginaAjustes extends StatelessWidget {
@@ -186,22 +187,21 @@ class _Fila extends StatelessWidget {
   }
 }
 
-/// Segmento Auto / Claro / Oscuro. Por ahora solo visual; el cambio de tema
-/// real llega en la Fase 3.
-class _SegmentoTema extends StatefulWidget {
+/// Segmento Auto / Claro / Oscuro conectado al [ThemeController].
+class _SegmentoTema extends StatelessWidget {
   const _SegmentoTema();
 
-  @override
-  State<_SegmentoTema> createState() => _SegmentoTemaState();
-}
-
-class _SegmentoTemaState extends State<_SegmentoTema> {
-  int _sel = 1;
-  static const _opciones = ['Auto', 'Claro', 'Oscuro'];
+  static const _opciones = <(ThemeMode, String)>[
+    (ThemeMode.system, 'Auto'),
+    (ThemeMode.light, 'Claro'),
+    (ThemeMode.dark, 'Oscuro'),
+  ];
 
   @override
   Widget build(BuildContext context) {
     final c = context.colores;
+    final tema = ThemeScope.of(context);
+
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
@@ -211,23 +211,23 @@ class _SegmentoTemaState extends State<_SegmentoTema> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          for (var i = 0; i < _opciones.length; i++)
+          for (final (modo, label) in _opciones)
             GestureDetector(
-              onTap: () => setState(() => _sel = i),
+              onTap: () => tema.establecer(modo),
               child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: i == _sel ? c.azul : Colors.transparent,
+                  color: modo == tema.mode ? c.azul : Colors.transparent,
                   borderRadius: BorderRadius.circular(7),
                 ),
                 child: Text(
-                  _opciones[i],
+                  label,
                   style: TextStyle(
                     fontFamily: AppTypography.cuerpo,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: i == _sel ? Colors.white : c.tenue,
+                    color: modo == tema.mode ? Colors.white : c.tenue,
                   ),
                 ),
               ),

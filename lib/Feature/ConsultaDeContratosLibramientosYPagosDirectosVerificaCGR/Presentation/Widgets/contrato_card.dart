@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:consultas_y_contrataciones/Core/Formatos/formatos.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Domain/Entities/contrato_entity.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
 import 'estado_badge.dart';
 import 'fila_detalle.dart';
-import 'verifica_cgr_colores.dart';
 
 /// Tarjeta de un contrato.
 ///
@@ -75,22 +75,22 @@ class ContratoCard extends StatelessWidget {
                 Formatos.capitalizar(concepto),
                 maxLines: conceptoLargo ? 2 : null,
                 overflow: conceptoLargo ? TextOverflow.ellipsis : null,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: VerificaCgrColores.texto,
+                  color: context.colores.tinta,
                   height: 1.35,
                 ),
               ),
               if (conceptoLargo && onVerConcepto != null)
                 InkWell(
                   onTap: () => onVerConcepto!(concepto),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       'Ver más',
                       style: TextStyle(
                         fontSize: 13,
-                        color: VerificaCgrColores.azulBoton,
+                        color: context.colores.azulEnlace,
                         decoration: TextDecoration.underline,
                         fontWeight: FontWeight.w600,
                       ),

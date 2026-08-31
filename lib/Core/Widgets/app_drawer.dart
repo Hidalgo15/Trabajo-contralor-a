@@ -31,11 +31,11 @@ class AppDrawer extends StatelessWidget {
               18,
               18,
             ),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [c.azul, c.azulProfundo],
+                colors: [AppColors.marca, AppColors.marcaProfundo],
               ),
             ),
             child: Column(

@@ -16,7 +16,6 @@ import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramient
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Presentation/Widgets/dialogos.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Presentation/Widgets/seccion_tramites.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Presentation/Widgets/tramite_card.dart';
-import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Presentation/Widgets/verifica_cgr_colores.dart';
 
 /// Resultados de la consulta.
 ///
@@ -128,7 +127,7 @@ class PaginaResultadosCgr extends StatelessWidget {
                         '${Formatos.selloDeTiempo(DateTime.now())}',
                         textAlign: TextAlign.center,
                         style: AppTypography.datos(
-                          color: VerificaCgrColores.textoTenue,
+                          color: context.colores.tenue,
                           fontSize: 11,
                         ),
                       ),
@@ -221,14 +220,13 @@ class _Resumen extends StatelessWidget {
     final beneficiario = resultado.beneficiarioGeneral;
     final rpe = resultado.proveedor.rpe;
 
-    final c = context.colores;
     return Container(
       padding: const EdgeInsets.all(AppDimens.lg),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [c.azul, c.azulProfundo],
+          colors: [AppColors.marca, AppColors.marcaProfundo],
         ),
         borderRadius: BorderRadius.circular(AppDimens.radioLg),
       ),
@@ -300,23 +298,20 @@ class _SinResultados extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.colores;
     final inhabilitado = proveedor.rpeInhabilitado;
     final motivo = proveedor.motivoInhabilitacion;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: VerificaCgrColores.avisoFondo,
-        border: Border.all(color: const Color(0xFFFFE8B3)),
-        borderRadius: BorderRadius.circular(10),
+        color: c.avisoFondo,
+        border: Border.all(color: c.aviso.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(AppDimens.radioLg),
       ),
       child: Column(
         children: [
-          const Icon(
-            Icons.warning_amber_rounded,
-            size: 40,
-            color: Color(0xFFC68A00),
-          ),
+          Icon(Icons.warning_amber_rounded, size: 40, color: c.aviso),
           const SizedBox(height: 12),
           Text(
             inhabilitado
@@ -325,11 +320,11 @@ class _SinResultados extends StatelessWidget {
                 : 'Actualmente usted no posee trámites pendientes en la '
                     'Contraloría.',
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14.5,
               fontStyle: FontStyle.italic,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF4A3B00),
+              color: c.aviso,
               height: 1.5,
             ),
           ),
@@ -346,19 +341,18 @@ class _SinResultados extends StatelessWidget {
                 ],
               ),
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 13.5,
-                color: Color(0xFF4A3B00),
-                height: 1.45,
-              ),
+              style: TextStyle(fontSize: 13.5, color: c.aviso, height: 1.45),
             ),
           ],
           if (inhabilitado) ...[
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'Esta información es suministrada por la DGCP.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12.5, color: Color(0xFF6A4A00)),
+              style: TextStyle(
+                fontSize: 12.5,
+                color: c.aviso.withValues(alpha: 0.85),
+              ),
             ),
           ],
         ],

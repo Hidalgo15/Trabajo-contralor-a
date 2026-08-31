@@ -48,13 +48,15 @@ class InstitutionalFooter extends StatelessWidget {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [c.azul, c.azulProfundo],
+              colors: [AppColors.marca, AppColors.marcaProfundo],
             ),
-            border: Border(top: BorderSide(color: c.rojoVivo, width: 3)),
+            border: Border(
+              top: BorderSide(color: AppColors.rojoMarca, width: 3),
+            ),
           ),
           child: Column(
             children: [
