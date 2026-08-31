@@ -44,7 +44,7 @@ const List<ServicioApp> serviciosApp = <ServicioApp>[
   ServicioApp(
     id: ServicioId.verificaCgr,
     titulo: 'Verifica CGR',
-    resumen: 'Contratos, libramientos y pagos',
+    resumen: 'Consulta trámites',
     descripcion: 'Contratos, libramientos y pagos directos de proveedores.',
     icono: Icons.verified_outlined,
     pantalla: _verificaCgr,
@@ -52,7 +52,7 @@ const List<ServicioApp> serviciosApp = <ServicioApp>[
   ServicioApp(
     id: ServicioId.empleados,
     titulo: 'Empleados del Estado',
-    resumen: 'Nómina pública y salarios',
+    resumen: 'Nómina y salarios',
     descripcion: 'Nómina pública, cargos y salarios por cédula.',
     icono: Icons.badge_outlined,
     pantalla: _empleados,
@@ -60,7 +60,7 @@ const List<ServicioApp> serviciosApp = <ServicioApp>[
   ServicioApp(
     id: ServicioId.certificacion,
     titulo: 'Certificación de Cargos',
-    resumen: 'Estatus de tu solicitud',
+    resumen: 'Estado de solicitudes',
     descripcion: 'Estatus de tu solicitud de certificación de cargos.',
     icono: Icons.assignment_ind_outlined,
     pantalla: _certificacion,
@@ -68,7 +68,7 @@ const List<ServicioApp> serviciosApp = <ServicioApp>[
   ServicioApp(
     id: ServicioId.correspondencia,
     titulo: 'Correspondencia',
-    resumen: 'Seguimiento de documentos',
+    resumen: 'Seguimiento de docs',
     descripcion: 'Seguimiento de documentos por código de registro.',
     icono: Icons.mark_email_read_outlined,
     pantalla: _correspondencia,

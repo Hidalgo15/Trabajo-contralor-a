@@ -119,9 +119,9 @@ class _PaginaInicioState extends State<PaginaInicio> {
                   crossAxisCount: 2,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: AppDimens.md - 1,
-                  mainAxisSpacing: AppDimens.md - 1,
-                  childAspectRatio: 1.06,
+                  crossAxisSpacing: AppDimens.sm + 2,
+                  mainAxisSpacing: AppDimens.sm + 2,
+                  childAspectRatio: 1.55,
                   children: [
                     for (final s in visibles)
                       QuickCard(
