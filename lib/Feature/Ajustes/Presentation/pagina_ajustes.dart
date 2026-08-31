@@ -6,6 +6,7 @@ import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/theme_controller.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_header.dart';
+import 'package:consultas_y_contrataciones/Feature/Ajustes/Presentation/pagina_acerca.dart';
 
 class PaginaAjustes extends StatelessWidget {
   const PaginaAjustes({super.key});
@@ -101,15 +102,10 @@ class PaginaAjustes extends StatelessWidget {
                   _Fila(
                     icono: Icons.account_balance_outlined,
                     label: 'Acerca de la Contraloría',
-                    onTap: () {},
-                  ),
-                  _Fila(
-                    icono: Icons.description_outlined,
-                    label: 'Licencias de código abierto',
-                    onTap: () => showLicensePage(
-                      context: context,
-                      applicationName: 'Portal de Consultas CGR',
-                      applicationVersion: '2.0.0',
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const PaginaAcerca(),
+                      ),
                     ),
                   ),
                   _Fila(
