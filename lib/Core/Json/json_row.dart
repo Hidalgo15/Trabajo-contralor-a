@@ -61,8 +61,8 @@ class JsonRow {
     return num.tryParse(limpio);
   }
 
-   /// Numero tolerante a que SQL lo mande como texto con separadores de miles.
-  double? GetSalarios(List<String> nombres) {
+  /// Igual que [numero] pero fuerza `double`, para columnas de monto/salario.
+  double? decimal(List<String> nombres) {
     final v = valor(nombres);
     if (v == null) return null;
     if (v is double) return v;

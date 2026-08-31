@@ -1,7 +1,6 @@
 import 'package:consultas_y_contrataciones/Core/Presentation/footer_institucional.dart';
 import 'package:consultas_y_contrataciones/Core/Presentation/header_institucional.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/Entities/consulta_empleado_response_model.dart';
-import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/Entities/empleadoentity.dart';
 import 'package:flutter/material.dart';
 
 
@@ -266,8 +265,6 @@ class PaginaDetallesEmpleado extends StatelessWidget {
 }
 */
 
-
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class PaginaDetallesEmpleado extends StatelessWidget {
