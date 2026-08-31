@@ -26,12 +26,15 @@ class SectionHeader extends StatelessWidget {
       textBaseline: TextBaseline.alphabetic,
       children: [
         Expanded(
-          child: Text(
-            titulo,
-            style: const TextStyle(
-              fontFamily: AppTypography.display,
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
+          child: Semantics(
+            header: true,
+            child: Text(
+              titulo,
+              style: const TextStyle(
+                fontFamily: AppTypography.display,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
             ),
           ),
         ),

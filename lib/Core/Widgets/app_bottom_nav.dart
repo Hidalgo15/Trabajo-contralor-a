@@ -76,36 +76,43 @@ class _NavButton extends StatelessWidget {
     final c = context.colores;
     final color = seleccionado ? c.azul : c.tenue;
 
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            seleccionado ? item.iconoActivo : item.icono,
-            size: 22,
-            color: color,
-          ),
-          const SizedBox(height: 3),
-          Text(
-            item.label,
-            style: TextStyle(
-              fontFamily: AppTypography.cuerpo,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
+    return Semantics(
+      button: true,
+      selected: seleccionado,
+      label: item.label,
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              seleccionado ? item.iconoActivo : item.icono,
+              size: 22,
               color: color,
             ),
-          ),
-          const SizedBox(height: 2),
-          Container(
-            width: 4,
-            height: 4,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: seleccionado ? c.rojoVivo : Colors.transparent,
+            const SizedBox(height: 3),
+            Text(
+              item.label,
+              style: TextStyle(
+                fontFamily: AppTypography.cuerpo,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 2),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              width: seleccionado ? 5 : 4,
+              height: seleccionado ? 5 : 4,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: seleccionado ? c.rojoVivo : Colors.transparent,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

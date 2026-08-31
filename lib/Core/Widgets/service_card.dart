@@ -25,7 +25,8 @@ class ServiceCard extends StatelessWidget {
     return AppCard(
       onTap: onTap,
       padding: const EdgeInsets.all(AppDimens.md + 2),
-      child: Stack(
+      child: MergeSemantics(
+        child: Stack(
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,6 +61,7 @@ class ServiceCard extends StatelessWidget {
             child: Icon(Icons.chevron_right, size: 18, color: c.rojoVivo),
           ),
         ],
+        ),
       ),
     );
   }
@@ -104,29 +106,31 @@ class QuickCard extends StatelessWidget {
     return AppCard(
       onTap: onTap,
       padding: const EdgeInsets.all(AppDimens.md + 1),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _IconoServicio(icono: servicio.icono),
-          const SizedBox(height: AppDimens.sm),
-          Text(
-            servicio.titulo,
-            style: const TextStyle(
-              fontFamily: AppTypography.display,
-              fontWeight: FontWeight.w600,
-              fontSize: 13.5,
-              height: 1.2,
+      child: MergeSemantics(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _IconoServicio(icono: servicio.icono),
+            const SizedBox(height: AppDimens.sm),
+            Text(
+              servicio.titulo,
+              style: const TextStyle(
+                fontFamily: AppTypography.display,
+                fontWeight: FontWeight.w600,
+                fontSize: 13.5,
+                height: 1.2,
+              ),
             ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            servicio.resumen,
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall
-                ?.copyWith(color: c.tenue, fontSize: 11.5, height: 1.3),
-          ),
-        ],
+            const SizedBox(height: 3),
+            Text(
+              servicio.resumen,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: c.tenue, fontSize: 11.5, height: 1.3),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -187,6 +187,18 @@ class AppTheme {
 
       iconTheme: IconThemeData(color: c.tintaSuave),
       splashFactory: InkSparkle.splashFactory,
+
+      // Transición de página suave y consistente (spec Material 3). Flutter
+      // la desactiva sola cuando el sistema tiene "reducir movimiento".
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
+        },
+      ),
     );
   }
 }

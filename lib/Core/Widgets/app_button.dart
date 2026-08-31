@@ -36,25 +36,30 @@ class AppButton extends StatelessWidget {
     final c = context.colores;
     final accion = cargando ? null : onPressed;
 
-    final Widget contenido = cargando
-        ? const SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.4,
-              valueColor: AlwaysStoppedAnimation(Colors.white),
-            ),
-          )
-        : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icono != null) ...[
-                Icon(icono, size: 18),
-                const SizedBox(width: 8),
+    final Widget contenido = AnimatedSwitcher(
+      duration: const Duration(milliseconds: 180),
+      child: cargando
+          ? const SizedBox(
+              key: ValueKey('cargando'),
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.4,
+                valueColor: AlwaysStoppedAnimation(Colors.white),
+              ),
+            )
+          : Row(
+              key: const ValueKey('etiqueta'),
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icono != null) ...[
+                  Icon(icono, size: 18),
+                  const SizedBox(width: 8),
+                ],
+                Text(label),
               ],
-              Text(label),
-            ],
-          );
+            ),
+    );
 
     if (kind == AppButtonKind.ghost) {
       return OutlinedButton(onPressed: accion, child: contenido);

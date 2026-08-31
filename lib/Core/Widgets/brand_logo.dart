@@ -19,10 +19,14 @@ class BrandLogo extends StatelessWidget {
     super.key,
     this.variante = LogoVariante.completo,
     this.height = 96,
+    this.semanticLabel,
   });
 
   final LogoVariante variante;
   final double height;
+
+  /// Etiqueta para lectores de pantalla. `null` = decorativo (se ignora).
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +43,13 @@ class BrandLogo extends StatelessWidget {
       asset,
       height: height,
       fit: BoxFit.contain,
+      semanticLabel: semanticLabel,
+      excludeFromSemantics: semanticLabel == null,
       errorBuilder: (_, _, _) => Icon(
         Icons.account_balance,
         size: height * 0.8,
         color: colorFallback,
+        semanticLabel: semanticLabel,
       ),
     );
   }

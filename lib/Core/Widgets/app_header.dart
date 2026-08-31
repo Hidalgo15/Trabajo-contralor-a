@@ -45,7 +45,11 @@ class AppHeader extends StatelessWidget {
     Widget centro;
     if (mostrarLogo) {
       centro = Center(
-        child: Row(
+        child: Semantics(
+          header: true,
+          label: 'Contraloría General de la República',
+          excludeSemantics: true,
+          child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             // La cúpula es azul; sobre la barra azul la pintamos en blanco.
@@ -69,18 +73,22 @@ class AppHeader extends StatelessWidget {
               ),
             ),
           ],
+          ),
         ),
       );
     } else {
       centro = Padding(
         padding: const EdgeInsets.only(left: 4),
-        child: Text(
-          titulo ?? '',
-          style: const TextStyle(
-            fontFamily: AppTypography.display,
-            fontWeight: FontWeight.w600,
-            fontSize: 17,
-            color: Colors.white,
+        child: Semantics(
+          header: true,
+          child: Text(
+            titulo ?? '',
+            style: const TextStyle(
+              fontFamily: AppTypography.display,
+              fontWeight: FontWeight.w600,
+              fontSize: 17,
+              color: Colors.white,
+            ),
           ),
         ),
       );
