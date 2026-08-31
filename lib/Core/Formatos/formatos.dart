@@ -39,15 +39,17 @@ class Formatos {
   };
 
   /// Monto con su simbolo. Sin moneda reconocida cae a DOP, que es el mismo
-  /// comportamiento del portal web.
+  /// comportamiento del portal web. Si no hay monto devuelve el guion largo,
+  /// para no mostrar un "RD$ 0.00" que pueda parecer un monto real.
   static String moneda(num? valor, String? moneda) {
+    if (valor == null) return vacio;
     final codigo = _codigosMoneda[(moneda ?? '').trim()] ?? 'DOP';
     final formato = NumberFormat.currency(
       locale: 'es_DO',
       symbol: '${_simbolos[codigo] ?? codigo} ',
       decimalDigits: 2,
     );
-    return formato.format(valor ?? 0);
+    return formato.format(valor);
   }
 
   static String fecha(DateTime? valor) {

@@ -30,6 +30,8 @@ class _PaginaConsultaEmpleadosState extends State<PaginaConsultaEmpleados> {
   }
 
   Future<void> _buscarEmpleado() async {
+    if (_isLoading) return;
+
     final cedula = _cedulaController.text.trim();
     if (cedula.isEmpty) {
       setState(() => _error = 'Ingrese un número de cédula.');

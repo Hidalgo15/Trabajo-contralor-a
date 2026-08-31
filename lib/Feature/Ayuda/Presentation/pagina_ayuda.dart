@@ -71,52 +71,56 @@ class PaginaAyuda extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: AppDimens.lg),
-              Container(
-                decoration: BoxDecoration(
-                  color: c.superficie,
-                  border: Border.all(color: c.borde),
-                  borderRadius: BorderRadius.circular(AppDimens.radioMd),
-                ),
+              Material(
+                color: Colors.transparent,
                 clipBehavior: Clip.antiAlias,
-                child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(dividerColor: Colors.transparent),
-                  child: Column(
-                    children: [
-                      for (var i = 0; i < _faqs.length; i++) ...[
-                        if (i > 0) Divider(height: 1, color: c.borde),
-                        ExpansionTile(
-                          initiallyExpanded: i == 0,
-                          tilePadding: const EdgeInsets.symmetric(
-                            horizontal: AppDimens.md + 2,
-                          ),
-                          childrenPadding: const EdgeInsets.fromLTRB(
-                            AppDimens.md + 2,
-                            0,
-                            AppDimens.md + 2,
-                            AppDimens.md + 2,
-                          ),
-                          expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                          title: Text(
-                            _faqs[i].pregunta,
-                            style: const TextStyle(
-                              fontFamily: AppTypography.cuerpo,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
+                child: Ink(
+                  decoration: BoxDecoration(
+                    color: c.superficie,
+                    border: Border.all(color: c.borde),
+                    borderRadius: BorderRadius.circular(AppDimens.radioMd),
+                  ),
+                  child: Theme(
+                    data: Theme.of(context)
+                        .copyWith(dividerColor: Colors.transparent),
+                    child: Column(
+                      children: [
+                        for (var i = 0; i < _faqs.length; i++) ...[
+                          if (i > 0) Divider(height: 1, color: c.borde),
+                          ExpansionTile(
+                            initiallyExpanded: i == 0,
+                            tilePadding: const EdgeInsets.symmetric(
+                              horizontal: AppDimens.md + 2,
                             ),
-                          ),
-                          children: [
-                            Text(
-                              _faqs[i].respuesta,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(height: 1.5),
+                            childrenPadding: const EdgeInsets.fromLTRB(
+                              AppDimens.md + 2,
+                              0,
+                              AppDimens.md + 2,
+                              AppDimens.md + 2,
                             ),
-                          ],
-                        ),
+                            expandedCrossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            title: Text(
+                              _faqs[i].pregunta,
+                              style: const TextStyle(
+                                fontFamily: AppTypography.cuerpo,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                            children: [
+                              Text(
+                                _faqs[i].respuesta,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(height: 1.5),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),

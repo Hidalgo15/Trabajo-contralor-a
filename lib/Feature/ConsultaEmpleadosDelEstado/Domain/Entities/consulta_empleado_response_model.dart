@@ -18,7 +18,8 @@ class ConsultaEmpleadoResponseModel {
       cedula: json['Cedula'] as String?,
       nombre: json['Nombre'] as String?,
       detalles: rawDetalles
-          .map((e) => EmpleadoEntity.fromJson(e as Map<String, dynamic>))
+          .whereType<Map>()
+          .map((e) => EmpleadoEntity.fromJson(Map<String, dynamic>.from(e)))
           .toList(),
     );
   }

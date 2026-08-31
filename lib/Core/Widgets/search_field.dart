@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
 
@@ -18,12 +17,18 @@ class SearchField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final String hintText;
 
+  /// Este campo va sobre la franja azul institucional, que es la misma en tema
+  /// claro y oscuro. Por eso el fondo se mantiene fijo blanco y los colores de
+  /// texto también son fijos (oscuros), para evitar texto claro ilegible sobre
+  /// blanco en modo oscuro.
+  static const Color _fondo = Colors.white;
+  static const Color _tinta = Color(0xFF10233B);
+  static const Color _tenue = Color(0xFF5C6E88);
+
   @override
   Widget build(BuildContext context) {
-    final c = context.colores;
-
     return Material(
-      color: Colors.white,
+      color: _fondo,
       borderRadius: BorderRadius.circular(AppDimens.radioMd + 2),
       elevation: 6,
       shadowColor: Colors.black.withValues(alpha: 0.35),
@@ -31,27 +36,27 @@ class SearchField extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14),
         child: Row(
           children: [
-            Icon(Icons.search, size: 18, color: c.tenue),
+            const Icon(Icons.search, size: 18, color: _tenue),
             const SizedBox(width: 9),
             Expanded(
               child: TextField(
                 controller: controller,
                 onChanged: onChanged,
                 textInputAction: TextInputAction.search,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: AppTypography.cuerpo,
                   fontSize: 14,
-                  color: c.tinta,
+                  color: _tinta,
                 ),
                 decoration: InputDecoration(
                   isCollapsed: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   border: InputBorder.none,
                   hintText: hintText,
-                  hintStyle: TextStyle(
+                  hintStyle: const TextStyle(
                     fontFamily: AppTypography.cuerpo,
                     fontSize: 14,
-                    color: c.tenue,
+                    color: _tenue,
                   ),
                 ),
               ),

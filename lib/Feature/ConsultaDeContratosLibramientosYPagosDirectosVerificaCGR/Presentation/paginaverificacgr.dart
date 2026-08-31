@@ -84,6 +84,8 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
   }
 
   Future<void> _buscarTramite() async {
+    if (_isLoading) return;
+
     final documento =
         VerificaCgrRepository.soloDigitos(_documentoController.text);
 
