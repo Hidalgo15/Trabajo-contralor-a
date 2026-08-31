@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
 import 'package:consultas_y_contrataciones/Core/Formatos/formatos.dart';
-import 'verifica_cgr_colores.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
 
-/// Diálogo "Base Legal Institucional".
-///
-/// El texto es normativo y está copiado palabra por palabra del portal web
-/// (`ConsultaForm.vue`). Si cambia allá, tiene que cambiar aquí: no pueden
-/// circular dos versiones distintas del fundamento jurídico.
+/// Diálogo "Base Legal Institucional". El texto es normativo y está copiado del
+/// portal web (`ConsultaForm.vue`); si cambia allá, cambia aquí.
 Future<void> mostrarBaseLegal(BuildContext context) {
+  final c = context.colores;
   return showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text(
+      title: Text(
         'Base Legal Institucional',
         style: TextStyle(
-          color: VerificaCgrColores.azulMedianoche,
+          fontFamily: AppTypography.display,
+          color: c.azul,
           fontWeight: FontWeight.w700,
           fontSize: 18,
         ),
@@ -71,9 +71,6 @@ Future<void> mostrarBaseLegal(BuildContext context) {
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close, size: 18),
           label: const Text('Cerrar'),
-          style: TextButton.styleFrom(
-            foregroundColor: VerificaCgrColores.azulBoton,
-          ),
         ),
       ],
     ),
@@ -98,10 +95,11 @@ class _Vineta extends StatelessWidget {
             child: RichText(
               textAlign: TextAlign.justify,
               text: TextSpan(
-                style: const TextStyle(
+                style: TextStyle(
+                  fontFamily: AppTypography.cuerpo,
                   fontSize: 14,
                   height: 1.45,
-                  color: VerificaCgrColores.texto,
+                  color: context.colores.tinta,
                 ),
                 children: [
                   TextSpan(
@@ -121,13 +119,15 @@ class _Vineta extends StatelessWidget {
 
 /// Diálogo con el concepto completo de un contrato.
 Future<void> mostrarConcepto(BuildContext context, String concepto) {
+  final c = context.colores;
   return showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text(
+      title: Text(
         'Concepto completo',
         style: TextStyle(
-          color: VerificaCgrColores.azulMedianoche,
+          fontFamily: AppTypography.display,
+          color: c.azul,
           fontWeight: FontWeight.w700,
           fontSize: 18,
         ),
@@ -142,9 +142,6 @@ Future<void> mostrarConcepto(BuildContext context, String concepto) {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          style: TextButton.styleFrom(
-            foregroundColor: VerificaCgrColores.azulBoton,
-          ),
           child: const Text('Cerrar'),
         ),
       ],
