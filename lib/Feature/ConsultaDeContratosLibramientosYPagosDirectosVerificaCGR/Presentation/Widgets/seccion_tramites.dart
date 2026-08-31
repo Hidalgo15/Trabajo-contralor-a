@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'verifica_cgr_colores.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
 
-/// Sección colapsable con buscador, equivalente al `Accordion` de PrimeVue del
-/// portal web.
-///
-/// Diferencia deliberada con el web: allí el filtro está siempre visible; en
-/// móvil solo aparece cuando hay suficientes registros para que filtrar valga
-/// la pena, para no gastar alto de pantalla.
+/// Sección colapsable con buscador (equivale al acordeón del portal web). El
+/// filtro solo aparece cuando hay suficientes registros para que valga la pena.
 class SeccionTramites extends StatefulWidget {
   const SeccionTramites({
     super.key,
@@ -20,15 +18,9 @@ class SeccionTramites extends StatefulWidget {
   });
 
   final String titulo;
-
-  /// Total sin filtrar, para el contador del encabezado.
   final int cantidad;
-
   final String hintBusqueda;
-
-  /// Recibe el texto del filtro y devuelve las tarjetas a mostrar.
   final List<Widget> Function(String filtro) constructorHijos;
-
   final bool inicialmenteExpandida;
   final int minimoParaFiltrar;
 
@@ -48,46 +40,45 @@ class _SeccionTramitesState extends State<SeccionTramites> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.colores;
     final hijos = widget.constructorHijos(_filtro);
     final mostrarFiltro = widget.cantidad >= widget.minimoParaFiltrar;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AppDimens.md),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: VerificaCgrColores.borde),
-        borderRadius: BorderRadius.circular(10),
+        color: c.superficie,
+        border: Border.all(color: c.borde),
+        borderRadius: BorderRadius.circular(AppDimens.radioMd),
       ),
       clipBehavior: Clip.antiAlias,
       child: Theme(
-        // ExpansionTile pinta divisores propios que chocan con el borde.
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           initiallyExpanded: widget.inicialmenteExpandida,
-          backgroundColor: Colors.white,
-          collapsedBackgroundColor: VerificaCgrColores.fondoFila,
-          iconColor: VerificaCgrColores.azulBoton,
-          collapsedIconColor: VerificaCgrColores.azulMedianoche,
+          backgroundColor: c.superficie,
+          collapsedBackgroundColor: c.superficieAlt,
+          iconColor: c.azulEnlace,
+          collapsedIconColor: c.azul,
           tilePadding: const EdgeInsets.symmetric(horizontal: 14),
           title: Row(
             children: [
               Expanded(
                 child: Text(
                   widget.titulo,
-                  style: const TextStyle(
+                  style: TextStyle(
+                    fontFamily: AppTypography.display,
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: VerificaCgrColores.azulMedianoche,
+                    color: c.azul,
                   ),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 9,
-                  vertical: 3,
-                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                 decoration: BoxDecoration(
-                  color: VerificaCgrColores.azulMedianoche,
+                  color: c.azul,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -110,10 +101,6 @@ class _SeccionTramitesState extends State<SeccionTramites> {
                 textInputAction: TextInputAction.search,
                 decoration: InputDecoration(
                   hintText: widget.hintBusqueda,
-                  hintStyle: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                    fontSize: 14,
-                  ),
                   prefixIcon: const Icon(Icons.search, size: 20),
                   suffixIcon: _filtro.isEmpty
                       ? null
@@ -126,33 +113,18 @@ class _SeccionTramitesState extends State<SeccionTramites> {
                           },
                         ),
                   isDense: true,
-                  filled: true,
-                  fillColor: VerificaCgrColores.fondoSuave,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide:
-                        const BorderSide(color: VerificaCgrColores.borde),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(
-                      color: VerificaCgrColores.azulBoton,
-                      width: 1.5,
-                    ),
-                  ),
                 ),
               ),
               const SizedBox(height: 14),
             ],
             if (hijos.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Text(
                   'No hay registros que coincidan con la búsqueda.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: VerificaCgrColores.textoTenue,
+                    color: c.tenue,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
