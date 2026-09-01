@@ -1,11 +1,14 @@
+import 'package:flutter/material.dart';
+
+import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/app_button.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/app_header.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/app_text_field.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/form_card.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/info_box.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/Repository/consulta_empleado_repository.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/exception/consulta_empleado_exception.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Presentation/pagina_detalles_empleado.dart';
-import 'package:flutter/material.dart';
-import 'package:consultas_y_contrataciones/Core/Presentation/footer_institucional.dart';
-import 'package:consultas_y_contrataciones/Core/Presentation/header_institucional.dart';
-// import 'widgets/header_institucional.dart';
-// import 'widgets/footer_institucional.dart';
 
 class PaginaConsultaEmpleados extends StatefulWidget {
   const PaginaConsultaEmpleados({super.key});
@@ -17,12 +20,8 @@ class PaginaConsultaEmpleados extends StatefulWidget {
 
 class _PaginaConsultaEmpleadosState extends State<PaginaConsultaEmpleados> {
   final TextEditingController _cedulaController = TextEditingController();
-  bool _isNotRobot = false;
   bool _isLoading = false;
-
-  static const Color azulMedianoche = Color(0xFF003870);
-  static const Color azulBoton = Color(0xFF3182CE);
-  static const Color rojoCaribe = Color(0xFFEF3340);
+  String? _error;
 
   @override
   void dispose() {
@@ -31,345 +30,97 @@ class _PaginaConsultaEmpleadosState extends State<PaginaConsultaEmpleados> {
   }
 
   Future<void> _buscarEmpleado() async {
+    if (_isLoading) return;
+
     final cedula = _cedulaController.text.trim();
-
-  if (cedula.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Por favor, ingrese un número de cédula"),
-        backgroundColor: rojoCaribe,
-      ),
-    );
-    return;
-  }
-
-  if (!_isNotRobot) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Por favor, confirme que no es un robot"),
-        backgroundColor: rojoCaribe,
-      ),
-    );
-    return;
-  }
-
-  setState(() => _isLoading = true);
-
-  try {
-    // Instancia del repositorio que realiza la petición HTTP a Contraloría
-    final repository = ConsultaEmpleadoRepository();
-    final resultado = await repository.obtenerEmpleado(cedula);
-
-    if (!mounted) return;
-
-    // Navegación a la página de resultados pasando la entidad del empleado
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => PaginaDetallesEmpleado(
-          empleadoData: resultado,
-        ),
-      ),
-    );
-  } catch (e) {
-    if (!mounted) return;
-
-    // Manejo de errores con SnackBar
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          e is ConsultaEmpleadoException
-              ? e.mensaje
-              : "Ocurrió un error al consultar el servidor.",
-        ),
-        backgroundColor: rojoCaribe,
-      ),
-    );
-  } finally {
-    if (mounted) {
-      setState(() => _isLoading = false);
+    if (cedula.isEmpty) {
+      setState(() => _error = 'Ingrese un número de cédula.');
+      return;
     }
-  }
+
+    setState(() {
+      _error = null;
+      _isLoading = true;
+    });
+
+    try {
+      final repository = ConsultaEmpleadoRepository();
+      final resultado = await repository.obtenerEmpleado(cedula);
+      if (!mounted) return;
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => PaginaDetallesEmpleado(empleadoData: resultado),
+        ),
+      );
+    } on ConsultaEmpleadoException catch (e) {
+      if (!mounted) return;
+      setState(() => _error = e.mensaje);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _error = 'Ocurrió un error al consultar el servidor.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F8),
-      appBar: AppBar(
-        backgroundColor: azulMedianoche,
-        iconTheme: const IconThemeData(color: Colors.white),
-        elevation: 0,
-        title: const Text(
-          "Consulta Empleados del Estado",
-          style: TextStyle(color: Colors.white, fontSize: 16),
+    return Column(
+      children: [
+        const AppHeader(
+          titulo: 'Empleados del Estado',
+          leading: HeaderLeading.atras,
         ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header Institucional Reutilizable
-            const HeaderInstitucional(
-              tituloPantalla: 'Consulta Empleados del Estado',
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AppDimens.lg,
+              AppDimens.lg + 2,
+              AppDimens.lg,
+              AppDimens.xl,
             ),
-            const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
-
-            // Contenido Scrollable
-            Expanded(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 600),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 24.0,
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 8,
-                            offset: Offset(0, 3),
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Cabecera Gris del Formulario
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFF2F2F2),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(5),
-                                topRight: Radius.circular(5),
-                              ),
-                              border: Border(
-                                bottom: BorderSide(color: Color(0xFFE0E0E0)),
-                              ),
-                            ),
-                            child: const Text(
-                              "Consulta Empleados del Estado",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF333333),
-                              ),
-                            ),
-                          ),
-
-                          // Cuerpo del Formulario
-                          Padding(
-                            padding: const EdgeInsets.all(28.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  "Puede buscar por número de cédula.",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF4A5568),
-                                  ),
-                                ),
-                                const SizedBox(height: 18),
-
-                                const Text(
-                                  "Cédula",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF2D3748),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-
-                                SizedBox(
-                                  width: 280,
-                                  child: TextField(
-                                    controller: _cedulaController,
-                                    keyboardType: TextInputType.number,
-                                    textAlign: TextAlign.center,
-                                    decoration: InputDecoration(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 10,
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                        borderSide: const BorderSide(
-                                          color: Color(0xFFCBD5E0),
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                        borderSide: const BorderSide(
-                                          color: azulBoton,
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 22),
-
-                                const Text(
-                                  "Confirme que no es un robot:",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF2D3748),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-
-                                // Contenedor Captcha Estilo reCAPTCHA
-                                Container(
-                                  width: 280,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFF9F9F9),
-                                    border: Border.all(
-                                      color: Colors.grey.shade300,
-                                    ),
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Checkbox(
-                                        activeColor: azulMedianoche,
-                                        value: _isNotRobot,
-                                        onChanged: (val) {
-                                          setState(
-                                            () => _isNotRobot = val ?? false,
-                                          );
-                                        },
-                                      ),
-                                      const Text(
-                                        "I'm not a robot",
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: const [
-                                          Icon(
-                                            Icons.refresh,
-                                            color: azulBoton,
-                                            size: 22,
-                                          ),
-                                          Text(
-                                            "reCAPTCHA",
-                                            style: TextStyle(
-                                              fontSize: 8,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 24),
-
-                                // Botón Buscar
-                                SizedBox(
-                                  width: 280,
-                                  child: ElevatedButton.icon(
-                                    onPressed:
-                                        _isLoading ? null : _buscarEmpleado,
-                                    icon: _isLoading
-                                        ? const SizedBox.shrink()
-                                        : const Icon(Icons.search, size: 18),
-                                    label: _isLoading
-                                        ? const SizedBox(
-                                            height: 18,
-                                            width: 18,
-                                            child: CircularProgressIndicator(
-                                              color: Colors.white,
-                                              strokeWidth: 2,
-                                            ),
-                                          )
-                                        : const Text(
-                                            "Buscar",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: azulBoton,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // Banner Informativo Inferior de la Tarjeta
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 16,
-                            ),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFE3F2FD),
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(5),
-                                bottomRight: Radius.circular(5),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(
-                                  Icons.info_outline,
-                                  size: 16,
-                                  color: Color(0xFF1976D2),
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  "Datos actualizados Julio 2026",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF1976D2),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+            children: [
+              FormCard(
+                titulo: 'Empleados del Estado',
+                descripcion:
+                    'Consulta la nómina pública del Estado por número de cédula '
+                    'del servidor.',
+                children: [
+                  AppTextField(
+                    controller: _cedulaController,
+                    label: 'Cédula',
+                    hint: '000-0000000-0',
+                    prefixIcon: Icons.badge_outlined,
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.search,
+                    enabled: !_isLoading,
+                    errorText: _error,
+                    onChanged: (_) {
+                      if (_error != null) setState(() => _error = null);
+                    },
+                    onSubmitted: (_) => _buscarEmpleado(),
                   ),
-                ),
+                  const HelperText(
+                    icono: Icons.info_outline,
+                    texto: '11 dígitos, con o sin guiones.',
+                  ),
+                  AppButton(
+                    label: 'Buscar',
+                    icono: Icons.search,
+                    cargando: _isLoading,
+                    onPressed: _buscarEmpleado,
+                  ),
+                  const InfoBox(
+                    texto:
+                        'Nómina actualizada a julio 2026. Fuente: Dirección '
+                        'General de Presupuesto y SIGEF.',
+                  ),
+                ],
               ),
-            ),
-
-            // Footer Institucional Reutilizable
-            const FooterInstitucional(),
-          ],
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

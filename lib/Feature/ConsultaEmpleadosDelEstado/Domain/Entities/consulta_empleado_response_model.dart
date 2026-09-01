@@ -1,4 +1,3 @@
-import 'package:consultas_y_contrataciones/Core/Json/json_row.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/Entities/empleadoentity.dart';
 
 class ConsultaEmpleadoResponseModel {
@@ -19,7 +18,8 @@ class ConsultaEmpleadoResponseModel {
       cedula: json['Cedula'] as String?,
       nombre: json['Nombre'] as String?,
       detalles: rawDetalles
-          .map((e) => EmpleadoEntity.fromJson(e as Map<String, dynamic>))
+          .whereType<Map>()
+          .map((e) => EmpleadoEntity.fromJson(Map<String, dynamic>.from(e)))
           .toList(),
     );
   }

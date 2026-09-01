@@ -1,0 +1,166 @@
+import 'package:flutter/material.dart';
+
+import 'package:consultas_y_contrataciones/Core/Navigation/app_shell.dart';
+import 'package:consultas_y_contrataciones/Core/Navigation/servicios_app.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
+import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/app_header.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/institutional_footer.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/search_field.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/section_header.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/service_card.dart';
+
+class PaginaInicio extends StatefulWidget {
+  const PaginaInicio({super.key});
+
+  @override
+  State<PaginaInicio> createState() => _PaginaInicioState();
+}
+
+class _PaginaInicioState extends State<PaginaInicio> {
+  String _filtro = '';
+
+  List<ServicioApp> get _visibles {
+    final q = _filtro.trim().toLowerCase();
+    if (q.isEmpty) return serviciosApp;
+    return serviciosApp
+        .where((s) =>
+            s.titulo.toLowerCase().contains(q) ||
+            s.resumen.toLowerCase().contains(q) ||
+            s.descripcion.toLowerCase().contains(q))
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colores;
+    final scope = AppShellScope.of(context);
+    final visibles = _visibles;
+
+    // Cuánto sobresale el buscador de la zona azul hacia la zona blanca, para
+    // que quede a caballo entre ambas secciones.
+    const overlap = 26.0;
+
+    return Column(
+      children: [
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Column(
+              children: [
+                AppHeader(
+                  mostrarLogo: true,
+                  accion: HeaderButton(
+                    icono: Icons.help_outline,
+                    tooltip: 'Ayuda',
+                    onTap: () => scope.irAPestana(AppTab.ayuda),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [AppColors.marcaProfundo, AppColors.marca],
+                    ),
+                    // Curva inferior de la sección azul (¡Hola!) para un
+                    // acabado más suave entre el azul y el blanco.
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(AppDimens.radioLg + 8),
+                    ),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(18, 4, 18, AppDimens.xl),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '¡Hola!',
+                        style: TextStyle(
+                          fontFamily: AppTypography.display,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 27,
+                          letterSpacing: -0.5,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Consultas públicas de la Contraloría, en un solo lugar.',
+                        style: TextStyle(
+                          fontFamily: AppTypography.cuerpo,
+                          fontSize: 13,
+                          color: Colors.white.withValues(alpha: 0.8),
+                        ),
+                      ),
+                      // Reserva de espacio: el buscador se posiciona por el
+                      // [Stack] de abajo para poder sobresalir hacia el blanco.
+                      const SizedBox(height: overlap + AppDimens.lg),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              left: 18,
+              right: 18,
+              bottom: -overlap,
+              child: SearchField(
+                onChanged: (v) => setState(() => _filtro = v),
+              ),
+            ),
+          ],
+        ),
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AppDimens.lg,
+              overlap + AppDimens.sm,
+              AppDimens.lg,
+              0,
+            ),
+            children: [
+              SectionHeader(
+                titulo: 'Accesos rápidos',
+                accionLabel: 'Ver todos',
+                onAccion: () => scope.irAPestana(AppTab.servicios),
+              ),
+              const SizedBox(height: AppDimens.md),
+              if (visibles.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: AppDimens.xl),
+                  child: Text(
+                    'Sin resultados para tu búsqueda.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: c.tenue),
+                  ),
+                )
+              else
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: AppDimens.sm + 2,
+                  mainAxisSpacing: AppDimens.sm + 2,
+                  childAspectRatio: 1.55,
+                  children: [
+                    for (final s in visibles)
+                      QuickCard(
+                        servicio: s,
+                        onTap: () => scope.abrirServicio(s),
+                      ),
+                  ],
+                ),
+              const SizedBox(height: AppDimens.xl),
+              const InstitutionalFooter(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

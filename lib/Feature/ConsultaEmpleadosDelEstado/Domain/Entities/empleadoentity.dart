@@ -36,7 +36,7 @@ class EmpleadoEntity {
       nombre: row.texto(['nombre']),
       institucion: row.texto(['institucion']),
       funcion: row.texto(['funcion']),
-      salario: row.GetSalarios(['salario']),
+      salario: row.decimal(['salario']),
       fechaPeriodo: row.texto(['fecha']),
       cuenta: row.texto(['cuenta']),
       descripcionCuenta: row.texto(['descripcion_cuenta']),

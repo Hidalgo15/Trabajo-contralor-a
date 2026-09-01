@@ -25,11 +25,19 @@ dependencies:
   # Hoja de compartir / imprimir del sistema: en móvil no hay carpeta de
   # descargas universal, así que "Descargar PDF" abre el share sheet.
   printing: ^5.13.0
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.13.1
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logos/logo_contraloria.png"
+  min_sdk_android: 21
 
   flutter_lints: ^6.0.0
 
@@ -41,6 +49,25 @@ flutter:
   # Habilitar carga de imágenes locales
   assets:
     - assets/logos/
+    - assets/fonts/OFL-Bricolage.txt
+    - assets/fonts/OFL-IBMPlex.txt
+
+  # Tipografías del rediseño (empaquetadas para funcionar sin conexión).
+  # Bricolage Grotesque e IBM Plex Sans son fuentes variables (eje wght);
+  # Flutter mapea `fontWeight` al eje automáticamente.
+  fonts:
+    - family: Bricolage Grotesque
+      fonts:
+        - asset: assets/fonts/BricolageGrotesque.ttf
+    - family: IBM Plex Sans
+      fonts:
+        - asset: assets/fonts/IBMPlexSans.ttf
+    - family: IBM Plex Mono
+      fonts:
+        - asset: assets/fonts/IBMPlexMono-Regular.ttf
+        - asset: assets/fonts/IBMPlexMono-Medium.ttf
+          weight: 500
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

@@ -1,6 +1,6 @@
 {
-    "name": "consultas_y_contrataciones",
-    "short_name": "consultas_y_contrataciones",
+    "name": "Portal de Contraloria",
+    "short_name": "Portal de Contraloria",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

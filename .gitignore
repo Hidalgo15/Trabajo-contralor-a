@@ -23,6 +23,11 @@ migrate_working_dir/
 # is commented out by default.
 #.vscode/
 
+# launch.json local que desactiva CORS para desarrollo web de Verifica CGR.
+# No debe subirse al repo compartido (es un hack de desarrollo, no apto para
+# produccion ni para compilaciones de otro sistema operativo).
+.vscode/launch.json
+
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
