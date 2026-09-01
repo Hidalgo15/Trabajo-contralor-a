@@ -54,20 +54,22 @@ class MenuHeader extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 14, 22, 52),
+                  padding: const EdgeInsets.fromLTRB(22, 26, 22, 26),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // El PNG blanco trae bastante margen transparente, por eso
+                      // se usa a una altura alta para que el logo se vea grande.
                       const Center(
                         child: BrandLogo(
                           variante: LogoVariante.blanco,
-                          height: 76,
+                          height: 150,
                           semanticLabel:
                               'Contraloría General de la República Dominicana',
                         ),
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 8),
                       Text(
                         titulo,
                         textAlign: TextAlign.center,
