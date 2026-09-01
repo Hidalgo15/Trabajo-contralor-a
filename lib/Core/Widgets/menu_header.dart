@@ -6,7 +6,7 @@ import 'package:consultas_y_contrataciones/Core/Widgets/brand_logo.dart';
 
 /// Encabezado azul del menú principal: degradado institucional con la esquina
 /// inferior curva, una cúpula grande de marca de agua a la derecha, el logo
-/// oficial en blanco centrado y el título grande alineado a la izquierda.
+/// oficial en blanco y el título grande, ambos centrados.
 ///
 /// El color es fijo (marca / marcaProfundo): se ve igual en tema claro y oscuro,
 /// igual que la barra superior y el pie.
@@ -54,7 +54,7 @@ class MenuHeader extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 14, 22, 34),
+                  padding: const EdgeInsets.fromLTRB(22, 14, 22, 52),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -70,7 +70,7 @@ class MenuHeader extends StatelessWidget {
                       const SizedBox(height: 14),
                       Text(
                         titulo,
-                        textAlign: TextAlign.left,
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontFamily: AppTypography.display,
                           fontWeight: FontWeight.w700,
