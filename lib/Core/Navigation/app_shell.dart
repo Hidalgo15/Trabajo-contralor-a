@@ -9,8 +9,8 @@ import 'package:consultas_y_contrataciones/Feature/Menu/Presentation/pagina_menu
 /// Índice de cada pestaña de la barra inferior.
 class AppTab {
   const AppTab._();
-  static const int inicio = 0;
-  static const int ayuda = 1;
+  static const int ayuda = 0;
+  static const int inicio = 1;
   static const int informacion = 2;
 }
 
@@ -36,14 +36,14 @@ class _AppShellState extends State<AppShell> {
 
   static const List<AppBottomNavItem> _items = [
     AppBottomNavItem(
-      icono: Icons.home_outlined,
-      iconoActivo: Icons.home,
-      label: 'Inicio',
-    ),
-    AppBottomNavItem(
       icono: Icons.help_outline,
       iconoActivo: Icons.help,
       label: 'Ayuda',
+    ),
+    AppBottomNavItem(
+      icono: Icons.home_outlined,
+      iconoActivo: Icons.home,
+      label: 'Inicio',
     ),
     AppBottomNavItem(
       icono: Icons.info_outline,
