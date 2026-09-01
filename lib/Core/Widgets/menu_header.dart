@@ -54,7 +54,7 @@ class MenuHeader extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 26, 22, 26),
+                  padding: const EdgeInsets.fromLTRB(22, 26, 22, 44),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,

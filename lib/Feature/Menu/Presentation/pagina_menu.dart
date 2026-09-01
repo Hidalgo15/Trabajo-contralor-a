@@ -20,7 +20,12 @@ class PaginaMenu extends StatefulWidget {
 }
 
 class _PaginaMenuState extends State<PaginaMenu> {
-  static const double _overlap = 28;
+  /// Cuánto sube el buscador por encima del borde del header (queda "a caballo"
+  /// entre el azul y el blanco).
+  static const double _overlap = 24;
+
+  /// Alto aproximado del buscador; se usa para dejarle sitio a la lista.
+  static const double _altoBuscador = 52;
 
   String _filtro = '';
 
@@ -45,61 +50,67 @@ class _PaginaMenuState extends State<PaginaMenu> {
 
     return Column(
       children: [
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            const MenuHeader(),
-            Positioned(
-              left: 18,
-              right: 18,
-              bottom: -_overlap,
-              child: SearchField(
-                hintText: '¿Qué deseas consultar?',
-                onChanged: (v) => setState(() => _filtro = v),
-              ),
-            ),
-          ],
-        ),
+        const MenuHeader(),
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(
-              AppDimens.lg,
-              _overlap + AppDimens.lg,
-              AppDimens.lg,
-              0,
-            ),
+          child: Stack(
+            clipBehavior: Clip.none,
             children: [
-              const _TituloSeccion('Accesos principales'),
-              const SizedBox(height: AppDimens.md),
-              if (visibles.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppDimens.xl),
-                  child: Text(
-                    'Sin resultados para tu búsqueda.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: c.tenue),
+              // La lista, con un hueco arriba para que su contenido no arranque
+              // debajo del buscador.
+              ListView(
+                padding: EdgeInsets.fromLTRB(
+                  AppDimens.lg,
+                  _altoBuscador - _overlap + AppDimens.md,
+                  AppDimens.lg,
+                  0,
+                ),
+                children: [
+                  const _TituloSeccion('Accesos principales'),
+                  const SizedBox(height: AppDimens.md),
+                  if (visibles.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppDimens.xl,
+                      ),
+                      child: Text(
+                        'Sin resultados para tu búsqueda.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium?.copyWith(color: c.tenue),
+                      ),
+                    )
+                  else
+                    for (final s in visibles)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 11),
+                        child: MenuServiceCard(
+                          servicio: s,
+                          onTap: () => scope.abrirServicio(s),
+                        ),
+                      ),
+                  const SizedBox(height: AppDimens.sm),
+                  const InfoBox(
+                    texto:
+                        'Todas las consultas son públicas y gratuitas. No '
+                        'requieren usuario ni registro.',
                   ),
-                )
-              else
-                for (final s in visibles)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 11),
-                    child: MenuServiceCard(
-                      servicio: s,
-                      onTap: () => scope.abrirServicio(s),
-                    ),
-                  ),
-              const SizedBox(height: AppDimens.sm),
-              const InfoBox(
-                texto:
-                    'Todas las consultas son públicas y gratuitas. No requieren '
-                    'usuario ni registro.',
+                  const SizedBox(height: AppDimens.xl),
+                  const _PieMenu(),
+                  const SizedBox(height: AppDimens.lg),
+                ],
               ),
-              const SizedBox(height: AppDimens.xl),
-              const _PieMenu(),
-              const SizedBox(height: AppDimens.lg),
+              // El buscador queda fijo, pintado por encima de la lista, y
+              // sobresale hacia el azul del header.
+              Positioned(
+                left: 18,
+                right: 18,
+                top: -_overlap,
+                child: SearchField(
+                  hintText: '¿Qué deseas consultar?',
+                  onChanged: (v) => setState(() => _filtro = v),
+                ),
+              ),
             ],
           ),
         ),
@@ -155,10 +166,9 @@ class _PieMenu extends StatelessWidget {
       '© 2026 Contraloría General de la República. '
       'Todos los derechos reservados.',
       textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-        color: context.colores.tenue,
-        height: 1.4,
-      ),
+      style: Theme.of(
+        context,
+      ).textTheme.bodySmall?.copyWith(color: context.colores.tenue, height: 1.4),
     );
   }
 }
