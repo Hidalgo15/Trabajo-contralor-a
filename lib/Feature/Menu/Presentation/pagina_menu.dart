@@ -13,8 +13,8 @@ import 'package:consultas_y_contrataciones/Core/Widgets/service_card.dart';
 /// Pantalla de Inicio: es a la vez el menú de servicios. Fusiona lo que antes
 /// eran "Inicio" y "Servicios".
 ///
-/// Todo scrollea junto (header y buscador se van hacia arriba), salvo el título
-/// "Accesos principales", que se queda fijo y los servicios pasan por debajo.
+/// El header, el buscador y el título "Accesos principales" quedan fijos; solo
+/// la lista de servicios hace scroll (pasa por debajo del título).
 class PaginaMenu extends StatefulWidget {
   const PaginaMenu({super.key});
 
@@ -25,6 +25,9 @@ class PaginaMenu extends StatefulWidget {
 class _PaginaMenuState extends State<PaginaMenu> {
   /// Cuánto sobresale el buscador por debajo del borde del header.
   static const double _overlap = 24;
+
+  /// Alto reservado para el título fijo "Accesos principales".
+  static const double _altoTitulo = 52;
 
   String _filtro = '';
 
@@ -47,111 +50,97 @@ class _PaginaMenuState extends State<PaginaMenu> {
     final scope = AppShellScope.of(context);
     final visibles = _visibles;
 
-    final tarjetas = <Widget>[
-      if (visibles.isEmpty)
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppDimens.xl),
-          child: Text(
-            'Sin resultados para tu búsqueda.',
-            textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: c.tenue),
-          ),
-        )
-      else
-        for (final s in visibles)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 11),
-            child: MenuServiceCard(
-              servicio: s,
-              onTap: () => scope.abrirServicio(s),
+    return Column(
+      children: [
+        // ---- Fijo: header + buscador ----
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            const Column(
+              children: [
+                MenuHeader(),
+                SizedBox(height: _overlap + AppDimens.md),
+              ],
             ),
-          ),
-      const SizedBox(height: AppDimens.sm),
-      const InfoBox(
-        texto:
-            'Todas las consultas son públicas y gratuitas. No requieren usuario '
-            'ni registro.',
-      ),
-      const SizedBox(height: AppDimens.xl),
-      const _PieMenu(),
-      const SizedBox(height: AppDimens.lg),
-    ];
-
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
+            Positioned(
+              left: 18,
+              right: 18,
+              bottom: 4,
+              child: SearchField(
+                hintText: '¿Qué deseas consultar?',
+                onChanged: (v) => setState(() => _filtro = v),
+              ),
+            ),
+          ],
+        ),
+        // ---- Scroll: título fijo + lista que pasa por debajo ----
+        Expanded(
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              Column(
+              ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppDimens.lg,
+                  _altoTitulo,
+                  AppDimens.lg,
+                  0,
+                ),
                 children: [
-                  const MenuHeader(),
-                  // Sitio para que el buscador sobresalga hacia el blanco.
-                  const SizedBox(height: _overlap + AppDimens.md),
+                  if (visibles.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppDimens.xl,
+                      ),
+                      child: Text(
+                        'Sin resultados para tu búsqueda.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium?.copyWith(color: c.tenue),
+                      ),
+                    )
+                  else
+                    for (final s in visibles)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 11),
+                        child: MenuServiceCard(
+                          servicio: s,
+                          onTap: () => scope.abrirServicio(s),
+                        ),
+                      ),
+                  const SizedBox(height: AppDimens.sm),
+                  const InfoBox(
+                    texto:
+                        'Todas las consultas son públicas y gratuitas. No '
+                        'requieren usuario ni registro.',
+                  ),
+                  const SizedBox(height: AppDimens.xl),
+                  const _PieMenu(),
+                  const SizedBox(height: AppDimens.lg),
                 ],
               ),
+              // Título fijo: opaco, la lista pasa por detrás.
               Positioned(
-                left: 18,
-                right: 18,
-                bottom: 4,
-                child: SearchField(
-                  hintText: '¿Qué deseas consultar?',
-                  onChanged: (v) => setState(() => _filtro = v),
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  color: c.fondo,
+                  padding: const EdgeInsets.fromLTRB(
+                    AppDimens.lg,
+                    AppDimens.md,
+                    AppDimens.lg,
+                    10,
+                  ),
+                  child: const _TituloSeccion('Accesos principales'),
                 ),
               ),
             ],
           ),
         ),
-        SliverPersistentHeader(
-          pinned: true,
-          delegate: _TituloFijoDelegate(fondo: c.fondo),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(
-            AppDimens.lg,
-            AppDimens.sm,
-            AppDimens.lg,
-            0,
-          ),
-          sliver: SliverList(
-            delegate: SliverChildListDelegate(tarjetas),
-          ),
-        ),
       ],
     );
   }
-}
-
-/// Cabecera fija "Accesos principales" con la barrita roja. Alto fijo: no
-/// encoge al hacer scroll, solo se queda pegada arriba.
-class _TituloFijoDelegate extends SliverPersistentHeaderDelegate {
-  _TituloFijoDelegate({required this.fondo});
-
-  final Color fondo;
-
-  static const double _alto = 56;
-
-  @override
-  double get minExtent => _alto;
-
-  @override
-  double get maxExtent => _alto;
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: fondo,
-      alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.fromLTRB(AppDimens.lg, 0, AppDimens.lg, 12),
-      child: const _TituloSeccion('Accesos principales'),
-    );
-  }
-
-  @override
-  bool shouldRebuild(_TituloFijoDelegate oldDelegate) =>
-      oldDelegate.fondo != fondo;
 }
 
 /// Título de sección con la barrita roja debajo.
