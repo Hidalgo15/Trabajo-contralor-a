@@ -7,9 +7,6 @@ import 'package:consultas_y_contrataciones/Core/Widgets/brand_logo.dart';
 
 /// Qué muestra el botón izquierdo del encabezado.
 enum HeaderLeading {
-  /// Hamburguesa que abre el menú lateral del [Scaffold] contenedor.
-  menu,
-
   /// Flecha que hace `Navigator.maybePop`.
   atras,
 
@@ -25,7 +22,7 @@ class AppHeader extends StatelessWidget {
     super.key,
     this.titulo,
     this.mostrarLogo = false,
-    this.leading = HeaderLeading.menu,
+    this.leading = HeaderLeading.ninguno,
     this.accion,
   });
 
@@ -50,29 +47,29 @@ class AppHeader extends StatelessWidget {
           label: 'Contraloría General de la República',
           excludeSemantics: true,
           child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // La cúpula es azul; sobre la barra azul la pintamos en blanco.
-            const ColorFiltered(
-              colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-              child: BrandLogo(variante: LogoVariante.cupula, height: 26),
-            ),
-            const SizedBox(width: 8),
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 150),
-              child: Text(
-                'CONTRALORÍA GENERAL\nDE LA REPÚBLICA',
-                style: TextStyle(
-                  fontFamily: AppTypography.display,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 10,
-                  height: 1.15,
-                  letterSpacing: 0.4,
-                  color: Colors.white.withValues(alpha: 0.92),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // La cúpula es azul; sobre la barra azul la pintamos en blanco.
+              const ColorFiltered(
+                colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                child: BrandLogo(variante: LogoVariante.cupula, height: 26),
+              ),
+              const SizedBox(width: 8),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 150),
+                child: Text(
+                  'CONTRALORÍA GENERAL\nDE LA REPÚBLICA',
+                  style: TextStyle(
+                    fontFamily: AppTypography.display,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 8,
+                    height: 1.15,
+                    letterSpacing: 0.4,
+                    color: Colors.white.withValues(alpha: 0.92),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
           ),
         ),
       );
@@ -123,12 +120,6 @@ class AppHeader extends StatelessWidget {
 
   Widget _leading(BuildContext context) {
     switch (leading) {
-      case HeaderLeading.menu:
-        return HeaderButton(
-          icono: Icons.menu,
-          tooltip: 'Menú',
-          onTap: () => Scaffold.of(context).openDrawer(),
-        );
       case HeaderLeading.atras:
         return HeaderButton(
           icono: Icons.arrow_back,
