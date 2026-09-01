@@ -54,7 +54,7 @@ class MenuHeader extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 28, 22, 38),
+                  padding: const EdgeInsets.fromLTRB(22, 26, 22, 26),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -64,7 +64,7 @@ class MenuHeader extends StatelessWidget {
                       const Center(
                         child: BrandLogo(
                           variante: LogoVariante.blanco,
-                          height: 100,
+                          height: 110,
                           semanticLabel:
                               'Contraloría General de la República Dominicana',
                         ),
@@ -72,7 +72,7 @@ class MenuHeader extends StatelessWidget {
                       // Padding del título: arriba = separación con el logo,
                       // abajo = separación con el buscador.
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 18, 0, 0),
+                        padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
                         child: Text(
                           titulo,
                           textAlign: TextAlign.center,
