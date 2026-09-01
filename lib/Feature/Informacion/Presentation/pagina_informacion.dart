@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'package:consultas_y_contrataciones/Core/Navigation/app_shell.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/theme_controller.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_header.dart';
-import 'package:consultas_y_contrataciones/Feature/Ajustes/Presentation/pagina_acerca.dart';
+import 'package:consultas_y_contrataciones/Feature/Informacion/Presentation/pagina_acerca.dart';
 
-class PaginaAjustes extends StatelessWidget {
-  const PaginaAjustes({super.key});
+/// Pestaña "Información": apariencia (tema, idioma, tamaño de texto) y datos
+/// institucionales (acerca, contacto). La ayuda vive en su propia pestaña.
+class PaginaInformacion extends StatelessWidget {
+  const PaginaInformacion({super.key});
 
   void _elegirTamanoTexto(BuildContext context) {
     final tema = ThemeScope.of(context);
@@ -55,12 +56,11 @@ class PaginaAjustes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colores;
-    final scope = AppShellScope.of(context);
     final tema = ThemeScope.of(context);
 
     return Column(
       children: [
-        const AppHeader(titulo: 'Ajustes'),
+        const AppHeader(titulo: 'Información'),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.fromLTRB(
@@ -95,11 +95,6 @@ class PaginaAjustes extends StatelessWidget {
               _Grupo(
                 children: [
                   _Fila(
-                    icono: Icons.help_outline,
-                    label: 'Ayuda y preguntas frecuentes',
-                    onTap: () => scope.irAPestana(AppTab.ayuda),
-                  ),
-                  _Fila(
                     icono: Icons.account_balance_outlined,
                     label: 'Acerca de la Contraloría',
                     onTap: () => Navigator.of(context).push(
@@ -117,7 +112,7 @@ class PaginaAjustes extends StatelessWidget {
               ),
               const SizedBox(height: AppDimens.lg),
               Text(
-                'Contraloría General de la República · versión 2.0.0',
+                'Contraloría General de la República · versión 3.0.0',
                 textAlign: TextAlign.center,
                 style: AppTypography.datos(color: c.tenue, fontSize: 11),
               ),
@@ -183,10 +178,9 @@ class _Fila extends StatelessWidget {
               if (valor != null)
                 Text(
                   valor!,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: c.tenue),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: c.tenue),
                 ),
               if (onTap != null) ...[
                 const SizedBox(width: 4),
@@ -253,8 +247,10 @@ class _SegmentoTema extends StatelessWidget {
             GestureDetector(
               onTap: () => tema.establecer(modo),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: modo == tema.mode ? c.azul : Colors.transparent,
                   borderRadius: BorderRadius.circular(7),
