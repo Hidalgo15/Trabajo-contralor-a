@@ -99,7 +99,7 @@ const List<ServicioApp> serviciosApp = <ServicioApp>[
     titulo: 'Solicitud de Certificación de Cargos',
     subtitulo: 'Registra una nueva solicitud',
     descripcion: 'Registra una nueva solicitud de certificación de cargos.',
-    icono: Icons.note_add_outlined,
+    icono: Icons.workspace_premium_outlined,
     pantalla: _certificacion,
   ),
 ];
