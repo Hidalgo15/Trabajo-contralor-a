@@ -47,29 +47,29 @@ class AppHeader extends StatelessWidget {
           label: 'Contraloría General de la República',
           excludeSemantics: true,
           child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // La cúpula es azul; sobre la barra azul la pintamos en blanco.
-            const ColorFiltered(
-              colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-              child: BrandLogo(variante: LogoVariante.cupula, height: 26),
-            ),
-            const SizedBox(width: 8),
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 150),
-              child: Text(
-                'CONTRALORÍA GENERAL\nDE LA REPÚBLICA',
-                style: TextStyle(
-                  fontFamily: AppTypography.display,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 10,
-                  height: 1.15,
-                  letterSpacing: 0.4,
-                  color: Colors.white.withValues(alpha: 0.92),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // La cúpula es azul; sobre la barra azul la pintamos en blanco.
+              const ColorFiltered(
+                colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                child: BrandLogo(variante: LogoVariante.cupula, height: 26),
+              ),
+              const SizedBox(width: 8),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 150),
+                child: Text(
+                  'CONTRALORÍA GENERAL\nDE LA REPÚBLICA',
+                  style: TextStyle(
+                    fontFamily: AppTypography.display,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 8,
+                    height: 1.15,
+                    letterSpacing: 0.4,
+                    color: Colors.white.withValues(alpha: 0.92),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
           ),
         ),
       );
