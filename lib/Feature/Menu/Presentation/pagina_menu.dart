@@ -26,8 +26,9 @@ class _PaginaMenuState extends State<PaginaMenu> {
   /// Cuánto sobresale el buscador por debajo del borde del header.
   static const double _overlap = 24;
 
-  /// Alto reservado para el título fijo "Accesos principales".
-  static const double _altoTitulo = 52;
+  /// Alto reservado para el título fijo "Accesos principales" (debe ser >= al
+  /// alto real de esa cabecera para que la primera tarjeta no quede tapada).
+  static const double _altoTitulo = 66;
 
   String _filtro = '';
 
