@@ -54,7 +54,7 @@ class MenuHeader extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 26, 22, 44),
+                  padding: const EdgeInsets.fromLTRB(22, 36, 22, 52),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -64,22 +64,26 @@ class MenuHeader extends StatelessWidget {
                       const Center(
                         child: BrandLogo(
                           variante: LogoVariante.blanco,
-                          height: 110,
+                          height: 100,
                           semanticLabel:
                               'Contraloría General de la República Dominicana',
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        titulo,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontFamily: AppTypography.display,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 24,
-                          height: 1.15,
-                          letterSpacing: -0.3,
-                          color: Colors.white,
+                      // Padding del título: arriba = separación con el logo,
+                      // abajo = separación con el buscador.
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                        child: Text(
+                          titulo,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: AppTypography.display,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 24,
+                            height: 1.15,
+                            letterSpacing: -0.3,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
