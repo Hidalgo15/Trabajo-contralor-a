@@ -12,6 +12,9 @@ import 'package:consultas_y_contrataciones/Core/Widgets/service_card.dart';
 
 /// Pantalla de Inicio: es a la vez el menú de servicios. Fusiona lo que antes
 /// eran "Inicio" y "Servicios".
+///
+/// Todo scrollea junto (header y buscador se van hacia arriba), salvo el título
+/// "Accesos principales", que se queda fijo y los servicios pasan por debajo.
 class PaginaMenu extends StatefulWidget {
   const PaginaMenu({super.key});
 
@@ -20,12 +23,8 @@ class PaginaMenu extends StatefulWidget {
 }
 
 class _PaginaMenuState extends State<PaginaMenu> {
-  /// Cuánto sube el buscador por encima del borde del header (queda "a caballo"
-  /// entre el azul y el blanco).
+  /// Cuánto sobresale el buscador por debajo del borde del header.
   static const double _overlap = 24;
-
-  /// Alto aproximado del buscador; se usa para dejarle sitio a la lista.
-  static const double _altoBuscador = 52;
 
   String _filtro = '';
 
@@ -48,64 +47,55 @@ class _PaginaMenuState extends State<PaginaMenu> {
     final scope = AppShellScope.of(context);
     final visibles = _visibles;
 
-    return Column(
-      children: [
-        const MenuHeader(),
-        Expanded(
+    final tarjetas = <Widget>[
+      if (visibles.isEmpty)
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppDimens.xl),
+          child: Text(
+            'Sin resultados para tu búsqueda.',
+            textAlign: TextAlign.center,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: c.tenue),
+          ),
+        )
+      else
+        for (final s in visibles)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 11),
+            child: MenuServiceCard(
+              servicio: s,
+              onTap: () => scope.abrirServicio(s),
+            ),
+          ),
+      const SizedBox(height: AppDimens.sm),
+      const InfoBox(
+        texto:
+            'Todas las consultas son públicas y gratuitas. No requieren usuario '
+            'ni registro.',
+      ),
+      const SizedBox(height: AppDimens.xl),
+      const _PieMenu(),
+      const SizedBox(height: AppDimens.lg),
+    ];
+
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              // La lista, con un hueco arriba para que su contenido no arranque
-              // debajo del buscador.
-              ListView(
-                padding: EdgeInsets.fromLTRB(
-                  AppDimens.lg,
-                  _altoBuscador - _overlap + AppDimens.md,
-                  AppDimens.lg,
-                  0,
-                ),
+              Column(
                 children: [
-                  const _TituloSeccion('Accesos principales'),
-                  const SizedBox(height: AppDimens.md),
-                  if (visibles.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppDimens.xl,
-                      ),
-                      child: Text(
-                        'Sin resultados para tu búsqueda.',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium?.copyWith(color: c.tenue),
-                      ),
-                    )
-                  else
-                    for (final s in visibles)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 11),
-                        child: MenuServiceCard(
-                          servicio: s,
-                          onTap: () => scope.abrirServicio(s),
-                        ),
-                      ),
-                  const SizedBox(height: AppDimens.sm),
-                  const InfoBox(
-                    texto:
-                        'Todas las consultas son públicas y gratuitas. No '
-                        'requieren usuario ni registro.',
-                  ),
-                  const SizedBox(height: AppDimens.xl),
-                  const _PieMenu(),
-                  const SizedBox(height: AppDimens.lg),
+                  const MenuHeader(),
+                  // Sitio para que el buscador sobresalga hacia el blanco.
+                  const SizedBox(height: _overlap + AppDimens.md),
                 ],
               ),
-              // El buscador queda fijo, pintado por encima de la lista, y
-              // sobresale hacia el azul del header.
               Positioned(
                 left: 18,
                 right: 18,
-                top: -_overlap,
+                bottom: 4,
                 child: SearchField(
                   hintText: '¿Qué deseas consultar?',
                   onChanged: (v) => setState(() => _filtro = v),
@@ -114,9 +104,54 @@ class _PaginaMenuState extends State<PaginaMenu> {
             ],
           ),
         ),
+        SliverPersistentHeader(
+          pinned: true,
+          delegate: _TituloFijoDelegate(fondo: c.fondo),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            AppDimens.lg,
+            AppDimens.sm,
+            AppDimens.lg,
+            0,
+          ),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate(tarjetas),
+          ),
+        ),
       ],
     );
   }
+}
+
+/// Cabecera fija "Accesos principales" con la barrita roja. Alto fijo: no
+/// encoge al hacer scroll, solo se queda pegada arriba.
+class _TituloFijoDelegate extends SliverPersistentHeaderDelegate {
+  _TituloFijoDelegate({required this.fondo});
+
+  final Color fondo;
+
+  static const double _alto = 56;
+
+  @override
+  double get minExtent => _alto;
+
+  @override
+  double get maxExtent => _alto;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: fondo,
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.fromLTRB(AppDimens.lg, 0, AppDimens.lg, 12),
+      child: const _TituloSeccion('Accesos principales'),
+    );
+  }
+
+  @override
+  bool shouldRebuild(_TituloFijoDelegate oldDelegate) =>
+      oldDelegate.fondo != fondo;
 }
 
 /// Título de sección con la barrita roja debajo.
@@ -131,6 +166,7 @@ class _TituloSeccion extends StatelessWidget {
     return Semantics(
       header: true,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
