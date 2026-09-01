@@ -29,6 +29,7 @@ class MenuHeader extends StatelessWidget {
           ),
         ),
         child: Stack(
+          alignment: Alignment.topCenter,
           children: [
             Positioned(
               right: -46,
@@ -52,17 +53,18 @@ class MenuHeader extends StatelessWidget {
             SafeArea(
               bottom: false,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(22, 12, 22, 34),
+                padding: const EdgeInsets.fromLTRB(22, 14, 22, 34),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const BrandLogo(
                       variante: LogoVariante.blanco,
-                      height: 54,
+                      height: 76,
                       semanticLabel:
                           'Contraloría General de la República Dominicana',
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 12),
                     Text(
                       titulo,
                       textAlign: TextAlign.center,
