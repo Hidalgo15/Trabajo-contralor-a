@@ -5,8 +5,8 @@ import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/brand_logo.dart';
 
 /// Encabezado azul del menú principal: degradado institucional con la esquina
-/// inferior curva, una cúpula tenue de marca de agua a la derecha, el logo
-/// oficial en blanco y un único título centrado.
+/// inferior curva, una cúpula grande de marca de agua a la derecha, el logo
+/// oficial en blanco centrado y el título grande alineado a la izquierda.
 ///
 /// El color es fijo (marca / marcaProfundo): se ve igual en tema claro y oscuro,
 /// igual que la barra superior y el pie.
@@ -29,14 +29,13 @@ class MenuHeader extends StatelessWidget {
           ),
         ),
         child: Stack(
-          alignment: Alignment.topCenter,
           children: [
             Positioned(
-              right: -46,
-              top: 34,
+              right: -70,
+              top: 18,
               child: IgnorePointer(
                 child: Opacity(
-                  opacity: 0.08,
+                  opacity: 0.09,
                   child: ColorFiltered(
                     colorFilter: const ColorFilter.mode(
                       Colors.white,
@@ -44,7 +43,7 @@ class MenuHeader extends StatelessWidget {
                     ),
                     child: const BrandLogo(
                       variante: LogoVariante.cupula,
-                      height: 150,
+                      height: 240,
                     ),
                   ),
                 ),
@@ -52,31 +51,37 @@ class MenuHeader extends StatelessWidget {
             ),
             SafeArea(
               bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(22, 14, 22, 34),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const BrandLogo(
-                      variante: LogoVariante.blanco,
-                      height: 76,
-                      semanticLabel:
-                          'Contraloría General de la República Dominicana',
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      titulo,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: AppTypography.display,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 18,
-                        letterSpacing: -0.2,
-                        color: Colors.white,
+              child: SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 14, 22, 34),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Center(
+                        child: BrandLogo(
+                          variante: LogoVariante.blanco,
+                          height: 76,
+                          semanticLabel:
+                              'Contraloría General de la República Dominicana',
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 14),
+                      Text(
+                        titulo,
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                          fontFamily: AppTypography.display,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 24,
+                          height: 1.15,
+                          letterSpacing: -0.3,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
