@@ -15,8 +15,9 @@ class AppBottomNavItem {
   final String label;
 }
 
-/// Barra inferior de la app. Etiquetas siempre visibles y un punto rojo bajo la
-/// pestaña activa, como en el prototipo.
+/// Barra inferior de la app. Etiquetas siempre visibles; la pestaña activa se
+/// pinta con un bloque azul institucional de borde a borde (incluida el área de
+/// gestos del sistema), como en el mockup.
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
     super.key,
@@ -32,28 +33,27 @@ class AppBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colores;
+    final insetInferior = MediaQuery.viewPaddingOf(context).bottom;
 
     return Container(
       decoration: BoxDecoration(
         color: c.superficie,
         border: Border(top: BorderSide(color: c.borde)),
       ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            children: [
-              for (var i = 0; i < items.length; i++)
-                Expanded(
-                  child: _NavButton(
-                    item: items[i],
-                    seleccionado: i == index,
-                    onTap: () => onSelect(i),
-                  ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (var i = 0; i < items.length; i++)
+              Expanded(
+                child: _NavButton(
+                  item: items[i],
+                  seleccionado: i == index,
+                  insetInferior: insetInferior,
+                  onTap: () => onSelect(i),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
     );
@@ -64,54 +64,53 @@ class _NavButton extends StatelessWidget {
   const _NavButton({
     required this.item,
     required this.seleccionado,
+    required this.insetInferior,
     required this.onTap,
   });
 
   final AppBottomNavItem item;
   final bool seleccionado;
+  final double insetInferior;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final c = context.colores;
-    final color = seleccionado ? c.azul : c.tenue;
+    final color = seleccionado ? Colors.white : c.tenue;
 
     return Semantics(
       button: true,
       selected: seleccionado,
       label: item.label,
       excludeSemantics: true,
-      child: InkWell(
+      child: GestureDetector(
         onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              seleccionado ? item.iconoActivo : item.icono,
-              size: 22,
-              color: color,
-            ),
-            const SizedBox(height: 3),
-            Text(
-              item.label,
-              style: TextStyle(
-                fontFamily: AppTypography.cuerpo,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          color: seleccionado ? AppColors.marca : Colors.transparent,
+          padding: EdgeInsets.fromLTRB(4, 11, 4, insetInferior + 11),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                seleccionado ? item.iconoActivo : item.icono,
+                size: 22,
                 color: color,
               ),
-            ),
-            const SizedBox(height: 2),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              width: seleccionado ? 5 : 4,
-              height: seleccionado ? 5 : 4,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: seleccionado ? c.rojoVivo : Colors.transparent,
+              const SizedBox(height: 4),
+              Text(
+                item.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: AppTypography.cuerpo,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

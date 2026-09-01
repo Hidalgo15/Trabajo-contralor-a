@@ -2,26 +2,24 @@ import 'package:flutter/material.dart';
 
 import 'package:consultas_y_contrataciones/Core/Navigation/servicios_app.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_bottom_nav.dart';
-import 'package:consultas_y_contrataciones/Core/Widgets/app_drawer.dart';
-import 'package:consultas_y_contrataciones/Feature/Ajustes/Presentation/pagina_ajustes.dart';
 import 'package:consultas_y_contrataciones/Feature/Ayuda/Presentation/pagina_ayuda.dart';
-import 'package:consultas_y_contrataciones/Feature/HubPrincipal/Presentation/pagina_inicio.dart';
-import 'package:consultas_y_contrataciones/Feature/Servicios/Presentation/pagina_servicios.dart';
+import 'package:consultas_y_contrataciones/Feature/Informacion/Presentation/pagina_informacion.dart';
+import 'package:consultas_y_contrataciones/Feature/Menu/Presentation/pagina_menu.dart';
 
 /// Índice de cada pestaña de la barra inferior.
 class AppTab {
   const AppTab._();
   static const int inicio = 0;
-  static const int servicios = 1;
-  static const int ayuda = 2;
-  static const int ajustes = 3;
+  static const int ayuda = 1;
+  static const int informacion = 2;
 }
 
-/// Contenedor raíz: barra inferior de 4 pestañas + menú lateral.
+/// Contenedor raíz: barra inferior de 3 pestañas, sin menú lateral.
 ///
-/// Cada pestaña tiene su propio [Navigator] dentro de un [IndexedStack], así al
-/// cambiar de pestaña se conserva el historial de cada una y la barra inferior
-/// no desaparece cuando un servicio abre su formulario.
+/// El Inicio ya es la lista de servicios. Cada pestaña tiene su propio
+/// [Navigator] dentro de un [IndexedStack], así al cambiar de pestaña se
+/// conserva el historial de cada una y la barra inferior no desaparece cuando
+/// un servicio abre su formulario.
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
 
@@ -30,9 +28,11 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
+  static const int _cantPestanas = 3;
+
   int _tab = AppTab.inicio;
   final List<GlobalKey<NavigatorState>> _navKeys =
-      List.generate(4, (_) => GlobalKey<NavigatorState>());
+      List.generate(_cantPestanas, (_) => GlobalKey<NavigatorState>());
 
   static const List<AppBottomNavItem> _items = [
     AppBottomNavItem(
@@ -41,32 +41,25 @@ class _AppShellState extends State<AppShell> {
       label: 'Inicio',
     ),
     AppBottomNavItem(
-      icono: Icons.grid_view_outlined,
-      iconoActivo: Icons.grid_view_rounded,
-      label: 'Servicios',
-    ),
-    AppBottomNavItem(
       icono: Icons.help_outline,
       iconoActivo: Icons.help,
       label: 'Ayuda',
     ),
     AppBottomNavItem(
-      icono: Icons.settings_outlined,
-      iconoActivo: Icons.settings,
-      label: 'Ajustes',
+      icono: Icons.info_outline,
+      iconoActivo: Icons.info,
+      label: 'Información',
     ),
   ];
 
   Widget _raiz(int i) {
     switch (i) {
       case AppTab.inicio:
-        return const PaginaInicio();
-      case AppTab.servicios:
-        return const PaginaServicios();
+        return const PaginaMenu();
       case AppTab.ayuda:
         return const PaginaAyuda();
       default:
-        return const PaginaAjustes();
+        return const PaginaInformacion();
     }
   }
 
@@ -83,11 +76,11 @@ class _AppShellState extends State<AppShell> {
     if (i != _tab) setState(() => _tab = i);
   }
 
-  /// Cambia a Servicios y abre el formulario del [servicio].
+  /// Cambia al Inicio y abre el formulario del [servicio] sobre esa pestaña.
   void _abrirServicio(ServicioApp servicio) {
-    setState(() => _tab = AppTab.servicios);
+    setState(() => _tab = AppTab.inicio);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final nav = _navKeys[AppTab.servicios].currentState;
+      final nav = _navKeys[AppTab.inicio].currentState;
       nav?.popUntil((r) => r.isFirst);
       nav?.push(MaterialPageRoute<void>(builder: (_) => servicio.pantalla()));
     });
@@ -114,11 +107,10 @@ class _AppShellState extends State<AppShell> {
           if (!didPop) _manejarPop();
         },
         child: Scaffold(
-          drawer: const AppDrawer(),
           body: IndexedStack(
             index: _tab,
             children: [
-              for (var i = 0; i < 4; i++)
+              for (var i = 0; i < _cantPestanas; i++)
                 Navigator(
                   key: _navKeys[i],
                   onGenerateRoute: (settings) => MaterialPageRoute<void>(
@@ -153,8 +145,7 @@ class AppShellScope extends InheritedWidget {
   final void Function(ServicioApp servicio) abrirServicio;
 
   static AppShellScope of(BuildContext context) {
-    final scope =
-        context.dependOnInheritedWidgetOfExactType<AppShellScope>();
+    final scope = context.dependOnInheritedWidgetOfExactType<AppShellScope>();
     assert(scope != null, 'AppShellScope no encontrado en el árbol.');
     return scope!;
   }

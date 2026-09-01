@@ -1,3 +1,8 @@
+// En Flutter 3.41.1 `CupertinoPageTransitionsBuilder` lo reexporta material.dart
+// y este import queda sin usar; en versiones más nuevas hay que importarlo de
+// cupertino.dart. Se deja el import para no romper otras máquinas del equipo y
+// se silencia el aviso local. TODO: unificar el equipo en 3.41.1.
+// ignore: unused_import, undefined_shown_name
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 

@@ -7,9 +7,6 @@ import 'package:consultas_y_contrataciones/Core/Widgets/brand_logo.dart';
 
 /// Qué muestra el botón izquierdo del encabezado.
 enum HeaderLeading {
-  /// Hamburguesa que abre el menú lateral del [Scaffold] contenedor.
-  menu,
-
   /// Flecha que hace `Navigator.maybePop`.
   atras,
 
@@ -25,7 +22,7 @@ class AppHeader extends StatelessWidget {
     super.key,
     this.titulo,
     this.mostrarLogo = false,
-    this.leading = HeaderLeading.menu,
+    this.leading = HeaderLeading.ninguno,
     this.accion,
   });
 
@@ -123,12 +120,6 @@ class AppHeader extends StatelessWidget {
 
   Widget _leading(BuildContext context) {
     switch (leading) {
-      case HeaderLeading.menu:
-        return HeaderButton(
-          icono: Icons.menu,
-          tooltip: 'Menú',
-          onTap: () => Scaffold.of(context).openDrawer(),
-        );
       case HeaderLeading.atras:
         return HeaderButton(
           icono: Icons.arrow_back,

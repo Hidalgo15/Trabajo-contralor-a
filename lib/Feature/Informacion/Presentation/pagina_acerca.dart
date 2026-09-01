@@ -200,13 +200,13 @@ class PaginaAcerca extends StatelessWidget {
                   onTap: () => showLicensePage(
                     context: context,
                     applicationName: 'Portal de Consultas CGR',
-                    applicationVersion: '2.0.0',
+                    applicationVersion: '3.0.0',
                   ),
                 ),
               ),
               const SizedBox(height: AppDimens.md),
               Text(
-                'Versión 2.0.0',
+                'Versión 3.0.0',
                 textAlign: TextAlign.center,
                 style: AppTypography.datos(color: c.tenue, fontSize: 11),
               ),
