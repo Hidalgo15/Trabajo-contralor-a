@@ -64,7 +64,7 @@ class MenuHeader extends StatelessWidget {
                       const Center(
                         child: BrandLogo(
                           variante: LogoVariante.blanco,
-                          height: 150,
+                          height: 110,
                           semanticLabel:
                               'Contraloría General de la República Dominicana',
                         ),
