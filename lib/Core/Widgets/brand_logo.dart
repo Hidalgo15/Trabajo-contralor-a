@@ -12,6 +12,10 @@ enum LogoVariante {
 
   /// Solo la cúpula, en azul. Marca compacta para barras y chips.
   cupula,
+
+  /// Solo la cúpula, en blanco. Para lockups sobre fondo azul (más nítida que
+  /// escalar el PNG blanco completo).
+  cupulaBlanca,
 }
 
 class BrandLogo extends StatelessWidget {
@@ -34,10 +38,13 @@ class BrandLogo extends StatelessWidget {
       LogoVariante.completo => 'assets/logos/logo_contraloria.png',
       LogoVariante.blanco => 'assets/logos/logo_contraloria_blanco.png',
       LogoVariante.cupula => 'assets/logos/contraloria_azul.png',
+      LogoVariante.cupulaBlanca => 'assets/logos/cupula-blanca.png',
     };
 
-    final colorFallback =
-        variante == LogoVariante.blanco ? Colors.white : context.colores.azul;
+    final esClaro =
+        variante == LogoVariante.blanco ||
+        variante == LogoVariante.cupulaBlanca;
+    final colorFallback = esClaro ? Colors.white : context.colores.azul;
 
     return Image.asset(
       asset,
