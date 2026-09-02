@@ -5,14 +5,15 @@ import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Pr
 import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Presentation/ambito_empleados.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeCertificaciónDeCargos/Presentation/paginaconsultacontraloria.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaCorrespondencia/Presentation/paginaconsultacorrespondencia.dart';
+import 'package:consultas_y_contrataciones/Feature/SolicitudCertificacionDeCargos/Presentation/pagina_solicitud_certificacion.dart';
 
 /// Servicios de la app. Es la única fuente de verdad: el menú principal (Inicio)
 /// lee de aquí para pintar las tarjetas y para el buscador.
 ///
 /// Al alcance actual (4 consultas reales) se sumaron, por pedido de dirección,
-/// "Consulta Empleados · Descentralizados" y "Solicitud de Certificación de
-/// Cargos". Mientras no tengan pantalla propia, reutilizan la del servicio
-/// hermano.
+/// "Consulta Empleados · Descentralizados" (misma pantalla que Central, con el
+/// ámbito por parámetro) y "Solicitud de Certificación de Cargos" (pantalla
+/// propia con su formulario).
 enum ServicioId {
   empleadosCentral,
   empleadosDescentralizados,
@@ -54,6 +55,7 @@ Widget _empleadosDescentralizados() =>
 Widget _verificaCgr() => const PaginaVerificaCgr();
 Widget _correspondencia() => const PaginaConsultaCorrespondencia();
 Widget _certificacion() => const PaginaConsultaContraloria();
+Widget _solicitudCertificacion() => const PaginaSolicitudCertificacion();
 
 const List<ServicioApp> serviciosApp = <ServicioApp>[
   ServicioApp(
@@ -104,6 +106,6 @@ const List<ServicioApp> serviciosApp = <ServicioApp>[
     subtitulo: 'Registra una nueva solicitud',
     descripcion: 'Registra una nueva solicitud de certificación de cargos.',
     icono: Icons.workspace_premium_outlined,
-    pantalla: _certificacion,
+    pantalla: _solicitudCertificacion,
   ),
 ];

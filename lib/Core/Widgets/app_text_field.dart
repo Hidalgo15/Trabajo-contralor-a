@@ -25,6 +25,7 @@ class AppTextField extends StatelessWidget {
     this.enabled = true,
     this.obscureText = false,
     this.datos = true,
+    this.maxLines = 1,
     this.onChanged,
     this.onSubmitted,
   });
@@ -43,6 +44,9 @@ class AppTextField extends StatelessWidget {
   final String? errorText;
   final bool enabled;
   final bool obscureText;
+
+  /// Nº de líneas visibles. > 1 convierte el campo en área de texto.
+  final int maxLines;
 
   /// Usa la tipografía monoespaciada (para RNC, cédula, códigos…).
   final bool datos;
@@ -79,7 +83,8 @@ class AppTextField extends StatelessWidget {
           focusNode: focusNode,
           enabled: enabled,
           obscureText: obscureText,
-          keyboardType: keyboardType,
+          maxLines: obscureText ? 1 : maxLines,
+          keyboardType: maxLines > 1 ? TextInputType.multiline : keyboardType,
           textInputAction: textInputAction,
           maxLength: maxLength,
           inputFormatters: inputFormatters,

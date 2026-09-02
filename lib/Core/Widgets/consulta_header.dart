@@ -68,15 +68,20 @@ class ConsultaHeader extends StatelessWidget {
                           onTap: () => Navigator.of(context).maybePop(),
                         ),
                         const SizedBox(width: 4),
-                        Semantics(
-                          header: true,
-                          child: Text(
-                            titulo,
-                            style: const TextStyle(
-                              fontFamily: AppTypography.display,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 18,
-                              color: Colors.white,
+                        Flexible(
+                          child: Semantics(
+                            header: true,
+                            child: Text(
+                              titulo,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontFamily: AppTypography.display,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 18,
+                                height: 1.15,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
