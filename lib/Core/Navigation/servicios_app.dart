@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Presentation/paginaverificacgr.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Presentation/paginaconsultaempleados.dart';
+import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Presentation/ambito_empleados.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeCertificaciónDeCargos/Presentation/paginaconsultacontraloria.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaCorrespondencia/Presentation/paginaconsultacorrespondencia.dart';
 
@@ -46,7 +47,10 @@ class ServicioApp {
   final Widget Function() pantalla;
 }
 
-Widget _empleados() => const PaginaConsultaEmpleados();
+Widget _empleadosCentral() =>
+    const PaginaConsultaEmpleados(ambito: AmbitoEmpleados.central);
+Widget _empleadosDescentralizados() =>
+    const PaginaConsultaEmpleados(ambito: AmbitoEmpleados.descentralizado);
 Widget _verificaCgr() => const PaginaVerificaCgr();
 Widget _correspondencia() => const PaginaConsultaCorrespondencia();
 Widget _certificacion() => const PaginaConsultaContraloria();
@@ -59,7 +63,7 @@ const List<ServicioApp> serviciosApp = <ServicioApp>[
     descripcion:
         'Nómina pública del Gobierno Central, cargos y salarios por cédula.',
     icono: Icons.groups_outlined,
-    pantalla: _empleados,
+    pantalla: _empleadosCentral,
   ),
   ServicioApp(
     id: ServicioId.empleadosDescentralizados,
@@ -68,7 +72,7 @@ const List<ServicioApp> serviciosApp = <ServicioApp>[
     descripcion:
         'Nómina de las instituciones descentralizadas y autónomas por cédula.',
     icono: Icons.diversity_3_outlined,
-    pantalla: _empleados,
+    pantalla: _empleadosDescentralizados,
   ),
   ServicioApp(
     id: ServicioId.verificaCgr,

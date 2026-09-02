@@ -9,11 +9,17 @@ import 'package:consultas_y_contrataciones/Core/Widgets/app_card.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_header.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/form_card.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/Entities/consulta_empleado_response_model.dart';
+import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Presentation/ambito_empleados.dart';
 
 class PaginaDetallesEmpleado extends StatelessWidget {
-  const PaginaDetallesEmpleado({super.key, required this.empleadoData});
+  const PaginaDetallesEmpleado({
+    super.key,
+    required this.empleadoData,
+    this.ambito,
+  });
 
   final ConsultaEmpleadoResponseModel empleadoData;
+  final AmbitoEmpleados? ambito;
 
   String _iniciales(String? nombre) {
     final partes = (nombre ?? '').trim().split(RegExp(r'\s+'));
@@ -56,6 +62,13 @@ class PaginaDetallesEmpleado extends StatelessWidget {
               AppDimens.xl,
             ),
             children: [
+              if (ambito != null) ...[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: PastillaAmbito(ambito!),
+                ),
+                const SizedBox(height: AppDimens.md),
+              ],
               AppCard(
                 child: Row(
                   children: [

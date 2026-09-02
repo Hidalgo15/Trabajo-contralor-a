@@ -6,16 +6,19 @@ import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_button.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_card.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_text_field.dart';
-import 'package:consultas_y_contrataciones/Core/Widgets/brand_logo.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/chip_icono.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/consulta_header.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/ilustracion_empleados.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/form_card.dart';
+import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Presentation/ambito_empleados.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/Repository/consulta_empleado_repository.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Domain/exception/consulta_empleado_exception.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaEmpleadosDelEstado/Presentation/pagina_detalles_empleado.dart';
 
 class PaginaConsultaEmpleados extends StatefulWidget {
-  const PaginaConsultaEmpleados({super.key});
+  const PaginaConsultaEmpleados({super.key, this.ambito});
+
+  final AmbitoEmpleados? ambito;
 
   @override
   State<PaginaConsultaEmpleados> createState() =>
@@ -26,6 +29,10 @@ class _PaginaConsultaEmpleadosState extends State<PaginaConsultaEmpleados> {
   final TextEditingController _cedulaController = TextEditingController();
   bool _isLoading = false;
   String? _error;
+
+  String get _descripcion =>
+      widget.ambito?.descripcion ??
+      'Consulta la nómina pública del Estado por número de cédula del servidor.';
 
   @override
   void dispose() {
@@ -53,7 +60,10 @@ class _PaginaConsultaEmpleadosState extends State<PaginaConsultaEmpleados> {
       if (!mounted) return;
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => PaginaDetallesEmpleado(empleadoData: resultado),
+          builder: (_) => PaginaDetallesEmpleado(
+            empleadoData: resultado,
+            ambito: widget.ambito,
+          ),
         ),
       );
     } on ConsultaEmpleadoException catch (e) {
@@ -73,10 +83,7 @@ class _PaginaConsultaEmpleadosState extends State<PaginaConsultaEmpleados> {
 
     return Column(
       children: [
-        const ConsultaHeader(
-          titulo: 'Empleados del Estado',
-          conLockup: false,
-        ),
+        const ConsultaHeader(titulo: 'Empleados del Estado'),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.fromLTRB(
@@ -93,16 +100,6 @@ class _PaginaConsultaEmpleadosState extends State<PaginaConsultaEmpleados> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 2, bottom: AppDimens.md + 2),
-                      child: Center(
-                        child: BrandLogo(
-                          height: 74,
-                          semanticLabel:
-                              'Contraloría General de la República Dominicana',
-                        ),
-                      ),
-                    ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -110,28 +107,32 @@ class _PaginaConsultaEmpleadosState extends State<PaginaConsultaEmpleados> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              if (widget.ambito != null) ...[
+                                PastillaAmbito(widget.ambito!),
+                                const SizedBox(height: 10),
+                              ],
                               Text(
-                                'Empleados del Estado',
+                                'Consulta los empleados del Estado',
                                 style: TextStyle(
                                   fontFamily: AppTypography.display,
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 22,
-                                  letterSpacing: -0.4,
+                                  fontSize: 20,
+                                  height: 1.2,
+                                  letterSpacing: -0.3,
                                   color: c.azul,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 6),
                               Text(
-                                'Consulta la nómina pública del Estado por '
-                                'número de cédula del servidor.',
+                                _descripcion,
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(height: 1.45),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        const ChipIcono(Icons.groups_outlined),
+                        const SizedBox(width: 14),
+                        const IlustracionEmpleados(size: 74),
                       ],
                     ),
                     const SizedBox(height: AppDimens.lg),
