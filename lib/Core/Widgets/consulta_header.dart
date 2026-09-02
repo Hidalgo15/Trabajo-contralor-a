@@ -12,9 +12,17 @@ import 'package:consultas_y_contrataciones/Core/Widgets/brand_logo.dart';
 /// El lockup se arma con la cúpula blanca (`cupula-blanca.png`) y texto de
 /// verdad, para que quede nítido y no dependa de escalar el PNG grande.
 class ConsultaHeader extends StatelessWidget {
-  const ConsultaHeader({super.key, required this.titulo});
+  const ConsultaHeader({
+    super.key,
+    required this.titulo,
+    this.conLockup = true,
+  });
 
   final String titulo;
+
+  /// Muestra el lockup del logo debajo del título. Si `false`, el header queda
+  /// corto (solo "volver" + título) y el logo va dentro de la pantalla.
+  final bool conLockup;
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +41,13 @@ class ConsultaHeader extends StatelessWidget {
           children: [
             Positioned(
               right: -56,
-              top: 24,
+              top: conLockup ? 24 : 6,
               child: IgnorePointer(
                 child: Opacity(
                   opacity: 0.07,
                   child: BrandLogo(
                     variante: LogoVariante.cupulaBlanca,
-                    height: 200,
+                    height: conLockup ? 200 : 150,
                   ),
                 ),
               ),
@@ -47,7 +55,7 @@ class ConsultaHeader extends StatelessWidget {
             SafeArea(
               bottom: false,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 8, 16, 22),
+                padding: EdgeInsets.fromLTRB(8, 8, 16, conLockup ? 22 : 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -74,11 +82,13 @@ class ConsultaHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: _Lockup(),
-                    ),
+                    if (conLockup) ...[
+                      const SizedBox(height: 16),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8),
+                        child: _Lockup(),
+                      ),
+                    ],
                   ],
                 ),
               ),

@@ -15,6 +15,7 @@ import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_button.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_card.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/app_text_field.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/chip_icono.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/consulta_header.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/ilustracion_consulta.dart';
 import 'package:consultas_y_contrataciones/Feature/ConsultaDeContratosLibramientosYPagosDirectosVerificaCGR/Config/verifica_cgr_config.dart';
@@ -222,7 +223,7 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const _ChipIcono(Icons.recent_actors_outlined),
+                            const ChipIcono(Icons.recent_actors_outlined),
                             const SizedBox(width: 12),
                             Expanded(
                               child: AppTextField(
@@ -261,7 +262,7 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const _ChipIcono(Icons.verified_user_outlined),
+                            const ChipIcono(Icons.verified_user_outlined),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
@@ -321,30 +322,6 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// Chip circular celeste con un ícono azul (izquierda de un campo o una fila).
-class _ChipIcono extends StatelessWidget {
-  const _ChipIcono(this.icono);
-
-  final IconData icono;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = context.colores;
-    return Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(
-        color: Color.alphaBlend(
-          c.azul.withValues(alpha: 0.12),
-          c.superficie,
-        ),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(icono, size: 20, color: c.azul),
     );
   }
 }
