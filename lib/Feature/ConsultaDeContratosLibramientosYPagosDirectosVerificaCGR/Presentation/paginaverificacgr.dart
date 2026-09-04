@@ -7,7 +7,7 @@ import 'package:consultas_y_contrataciones/Core/Captcha/recaptcha_web_view_provi
 import 'package:consultas_y_contrataciones/Core/Captcha/sin_captcha.dart';
 import 'package:consultas_y_contrataciones/Core/GeneralFeatures/recaptchahost.dart';
 import 'package:consultas_y_contrataciones/Core/NetWork/api_client.dart';
-import 'package:consultas_y_contrataciones/Core/Presentation/app_loading_overlay.dart';
+import 'package:consultas_y_contrataciones/Core/Navigation/app_shell.dart';
 import 'package:consultas_y_contrataciones/Core/Presentation/fase_operacion.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_dimens.dart';
@@ -99,6 +99,10 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
       return;
     }
 
+    // Se captura antes del await: así se puede ocultar el overlay aunque esta
+    // pantalla ya no exista (ej. el usuario volvió atrás durante la consulta).
+    final shell = AppShellScope.of(context);
+
     _focoNode.unfocus();
     setState(() {
       _isLoading = true;
@@ -107,6 +111,7 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
           ? FaseOperacion.seguridad
           : FaseOperacion.cargandoDatos;
     });
+    shell.mostrarCargando(_mensajeDeFase(_fase));
 
     try {
       final ConsultaResultadoEntity resultado =
@@ -114,9 +119,11 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
         documento,
         onFase: (fase) {
           if (mounted) setState(() => _fase = fase);
+          shell.mostrarCargando(_mensajeDeFase(fase));
         },
       );
 
+      shell.ocultarCargando();
       if (!mounted) return;
       setState(() => _isLoading = false);
 
@@ -127,6 +134,7 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
         ),
       );
     } on VerificaCgrException catch (e) {
+      shell.ocultarCargando();
       if (!mounted) return;
       setState(() {
         _isLoading = false;
@@ -134,6 +142,7 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
       });
       _mostrarError(e.mensaje);
     } catch (_) {
+      shell.ocultarCargando();
       if (!mounted) return;
       const mensaje = 'No se pudo completar la consulta, intente nuevamente.';
       setState(() {
@@ -316,8 +325,6 @@ class _PaginaVerificaCgrState extends State<PaginaVerificaCgr> {
                   ),
                 ],
               ),
-              if (_isLoading)
-                AppLoadingOverlay(message: _mensajeDeFase(_fase)),
             ],
           ),
         ),

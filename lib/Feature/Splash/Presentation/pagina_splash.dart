@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_colors.dart';
 import 'package:consultas_y_contrataciones/Core/Theme/app_typography.dart';
 import 'package:consultas_y_contrataciones/Core/Widgets/brand_logo.dart';
+import 'package:consultas_y_contrataciones/Core/Widgets/olas_decorativas.dart';
 
 /// Pantalla de bienvenida que se muestra al abrir la app, antes del menú.
 /// Avanza sola a los ~2,2 s o en cuanto el usuario toca.
@@ -106,18 +107,7 @@ class _PaginaSplashState extends State<PaginaSplash>
         onTap: _avanzar,
         behavior: HitTestBehavior.opaque,
         child: DecoratedBox(
-          decoration: const BoxDecoration(
-            gradient: RadialGradient(
-              center: Alignment(-0.1, -0.4),
-              radius: 1.15,
-              colors: [
-                Color(0xFF17427E),
-                Color(0xFF0C2551),
-                Color(0xFF060F24),
-              ],
-              stops: [0.0, 0.55, 1.0],
-            ),
-          ),
+          decoration: fondoOscuroDecoracion,
           child: Stack(
             children: [
               // ---- Ondas decorativas ----
@@ -125,7 +115,7 @@ class _PaginaSplashState extends State<PaginaSplash>
                 child: AnimatedBuilder(
                   animation: _deriva,
                   builder: (context, _) => CustomPaint(
-                    painter: _OlasPainter(fase: _deriva.value),
+                    painter: OlasDecorativasPainter(fase: _deriva.value),
                   ),
                 ),
               ),
@@ -286,79 +276,4 @@ class _PaginaSplashState extends State<PaginaSplash>
       ),
     );
   }
-}
-
-/// Ondas de fondo del splash: una clara y tenue arriba y unas bandas de azul
-/// profundo apiladas abajo, con una leve deriva animada.
-class _OlasPainter extends CustomPainter {
-  _OlasPainter({required this.fase});
-
-  /// 0..1 — desplaza los puntos de control para que las ondas "respiren".
-  final double fase;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final d = (fase - 0.5) * 26; // deriva en px
-
-    // Onda clara superior.
-    canvas.drawPath(
-      Path()
-        ..moveTo(0, h * 0.16)
-        ..cubicTo(w * 0.30, h * 0.02 + d, w * 0.55, h * 0.20 - d, w, h * 0.06)
-        ..lineTo(w, 0)
-        ..lineTo(0, 0)
-        ..close(),
-      Paint()..color = Colors.white.withValues(alpha: 0.035),
-    );
-
-    // Trazo diagonal fino.
-    canvas.drawPath(
-      Path()
-        ..moveTo(-20, h * 0.34)
-        ..cubicTo(
-          w * 0.25,
-          h * 0.24 + d,
-          w * 0.62,
-          h * 0.44 - d,
-          w + 20,
-          h * 0.28,
-        ),
-      Paint()
-        ..color = Colors.white.withValues(alpha: 0.05)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.4,
-    );
-
-    // Bandas de azul profundo apiladas abajo.
-    const azules = [
-      Color(0x33071B3D),
-      Color(0x59061634),
-      Color(0x8C05122B),
-    ];
-    for (var i = 0; i < azules.length; i++) {
-      final base = h * (0.70 + i * 0.10);
-      final dd = d * (i.isEven ? 1 : -1);
-      canvas.drawPath(
-        Path()
-          ..moveTo(0, base + 34)
-          ..cubicTo(
-            w * 0.28,
-            base - 26 + dd,
-            w * 0.64,
-            base + 40 - dd,
-            w,
-            base - 6,
-          )
-          ..lineTo(w, h)
-          ..lineTo(0, h)
-          ..close(),
-        Paint()..color = azules[i],
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_OlasPainter old) => old.fase != fase;
 }
