@@ -44,7 +44,7 @@ class _AppLoadingOverlayState extends State<AppLoadingOverlay>
   Widget build(BuildContext context) {
     final tamanoPantalla = MediaQuery.sizeOf(context);
     final anchoPantalla = tamanoPantalla.width;
-    final tamanoAnillo = (anchoPantalla * 0.84).clamp(220.0, 360.0);
+    final tamanoAnillo = (anchoPantalla * 0.4).clamp(130.0, 190.0);
 
     return Positioned.fill(
       child: DecoratedBox(
