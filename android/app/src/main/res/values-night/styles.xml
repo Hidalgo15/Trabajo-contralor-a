@@ -4,8 +4,11 @@
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <!-- Splash mientras Flutter dibuja su primer frame. Se quita solo. -->
         <item name="android:windowBackground">@drawable/launch_background</item>
-        <!-- Splash del sistema en Android 12+: mismo fondo azul profundo -->
+        <!-- Splash del sistema en Android 12+: mismo fondo azul profundo y la
+             cúpula blanca como ícono, para que se vea continuo con el splash
+             de Flutter (que también arranca con la cúpula). -->
         <item name="android:windowSplashScreenBackground">@color/splashBackground</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
     </style>
     <!-- Tema aplicado apenas arranca el proceso, detrás de la UI de Flutter -->
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
