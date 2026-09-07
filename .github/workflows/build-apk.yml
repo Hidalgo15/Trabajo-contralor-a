@@ -5,6 +5,9 @@ on:
     branches: [Dev_RonyVP, main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,3 +41,14 @@ jobs:
           name: app-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: error
+
+      # Publica el .apk directo en un release fijo, para poder bajarlo con un
+      # link limpio (sin zip) cuando la descarga de artifacts esté bloqueada.
+      - name: Publicar APK en release
+        if: github.ref_name == 'Dev_RonyVP'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-dev
+          name: APK de prueba (Dev_RonyVP)
+          prerelease: true
+          files: build/app/outputs/flutter-apk/app-debug.apk
