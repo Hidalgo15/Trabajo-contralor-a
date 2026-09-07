@@ -186,20 +186,30 @@ class _AnilloDeCarga extends StatelessWidget {
           size: Size.square(e(112)),
           painter: _AroPainter(progreso: progreso),
         ),
-        Container(
-          width: e(80),
-          height: e(80),
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [Color(0x2EFFFFFF), Colors.transparent],
-            ),
+        // Cúpula + resplandor con una leve pulsación.
+        Transform.scale(
+          scale: 1 + 0.055 * math.sin(progreso * 2 * math.pi * 2),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: e(80),
+                height: e(80),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [Color(0x2EFFFFFF), Colors.transparent],
+                  ),
+                ),
+              ),
+              BrandLogo(
+                variante: LogoVariante.cupulaBlanca,
+                height: e(52),
+                semanticLabel:
+                    'Contraloría General de la República Dominicana',
+              ),
+            ],
           ),
-        ),
-        BrandLogo(
-          variante: LogoVariante.cupulaBlanca,
-          height: e(52),
-          semanticLabel: 'Contraloría General de la República Dominicana',
         ),
       ],
     );
@@ -260,9 +270,8 @@ class _AroPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // El grosor y el inset escalan con el tamaño real del canvas (referencia:
-    // 112 px de base, igual que en el diseño original).
-    final grosor = size.width * 0.0625;
+    // El grosor y el inset escalan con el tamaño real del canvas.
+    final grosor = size.width * 0.095;
     final center = size.center(Offset.zero);
     final radio = size.width / 2 - grosor * 0.85;
     final rect = Rect.fromCircle(center: center, radius: radio);
